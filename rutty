@@ -1,0 +1,229 @@
+#!/usr/bin/env ruby
+
+# Constants
+CONF_DIR = File.join(ENV['HOME'], '.rutty')
+GENERAL_CONF = File.join(CONF_DIR, 'defaults.yaml')
+NODES_CONF = File.join(CONF_DIR, 'nodes.yaml')
+
+BASE_SSH = %{ssh -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p %i -i %s %s@%s 2>&1}
+
+# Gems
+require 'rubygems'
+require 'bundler/setup'
+require 'commander/import'
+require 'yaml'
+
+# Helpers
+def update_node_list &block
+  ary = YAML.load(File.open(NODES_CONF).read)
+  
+  yield ary
+  
+  File.open(NODES_CONF, 'w') do |f|
+    YAML.dump(ary, f)
+  end
+  
+  @node_list = false # Force the next call to get_node_list to read from file again
+end
+
+def get_node_list
+  @node_list ||= YAML.load(File.open(NODES_CONF).read)
+end
+
+def get_defaults_config
+  @config ||= YAML.load(File.open(GENERAL_CONF).read)
+end
+
+def check_installed!
+  unless File.exists? CONF_DIR
+    raise "Can't find conf directory at #{CONF_DIR}. Run `rutty init' first. (Or rutty --help for usage)"
+  end
+end
+
+def filter_nodes nodes, options
+  return nodes if options.a === true
+  
+  nodes.delete_if { |node| node[:keypath].nil? or node[:keypath] != options.keypath } unless options.keypath.nil?
+  nodes.delete_if { |node| node[:user].nil? or node[:user] != options.user } unless options.user.nil?
+  nodes.delete_if { |node| node[:port].nil? or node[:port] != options.port } unless options.port.nil?
+  nodes.delete_if { |node| node[:tags].nil? or (node[:tags] & options.tags).empty? } unless options.tags.nil?
+end
+
+def ssh_for_node node
+  values = []
+  
+  values << ((node[:port].nil? && get_defaults_config[:port]) || node[:port])
+  values << ((node[:keypath].nil? && get_defaults_config[:keypath]) || node[:keypath])
+  values << ((node[:user].nil? && get_defaults_config[:user]) || node[:user])
+  values << node[:host]
+  
+  BASE_SSH % values
+end
+
+# Commander config
+program :name, 'rutty'
+program :description, 'A DSH implementation in Ruby'
+program :version, '0.2.1'
+program :help_formatter, Commander::HelpFormatter::TerminalCompact
+
+default_command :dsh
+
+# Commander commands
+command :init do |c|
+  c.syntax = "rutty init"
+  c.summary = "Creates the default file structure for rutty."
+  c.when_called do
+    if File.exists? CONF_DIR
+      log "exists", CONF_DIR
+    else
+      log "create", CONF_DIR
+      Dir.mkdir CONF_DIR
+    end
+    
+    if File.exists? GENERAL_CONF
+      log "exists", GENERAL_CONF
+    else
+      log "create", GENERAL_CONF
+      
+      defaults_hash = { 
+        :user => 'root', 
+        :keypath => File.join(ENV['HOME'], '.ssh', 'id_rsa'), 
+        :port => 22
+      }
+      
+      File.open(GENERAL_CONF, 'w') do |f|
+        YAML.dump(defaults_hash, f)
+      end
+    end
+    
+    if File.exists? NODES_CONF
+      log "exists", NODES_CONF
+    else
+      log "create", NODES_CONF
+      
+      default_node = [
+        {
+          :host => 'localhost',
+          :port => 2222,
+          :keypath => File.join(ENV['HOME'], '.ssh', 'my_key.pem'),
+          :user => 'nobody',
+          :tags => %w(delete_me example localhost)
+        }
+      ]
+      
+      File.open(NODES_CONF, 'w') do |f|
+        YAML.dump(default_node, f)
+      end
+    end
+  end
+end
+
+command :add_node do |c|
+  c.syntax = "rutty add_node <HOST> [options]"
+  c.summary = "Add a node to the pool."
+  c.description = "#{c.summary} This is just a convenience method, you can also add a node directly to $HOME/.rutty/nodes.yaml"
+  
+  c.example "Add the 'localhost' node with just a keypath", "rutty add_node localhost --keypath ~/.ssh/my_key.pem"
+  c.example "Add a remote IP with all the options", "rutty add_node 192.168.1.100 --keypath ~/.ssh/my_key.pem --user root --tags local,funtimes,awesome"
+  
+  c.option('--keypath PATH', String, 'Path to the private key to use for this node')
+  c.option('--user NAME', String, 'User to login as on this node')
+  c.option('--port NUMBER', Integer, 'Port number SSH is running on on this node')
+  c.option('--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of strings to tag this node with')
+  
+  c.when_called do |args, options|
+    check_installed!
+    raise "Must supply a hostname or IP address. See `rutty help add_node' for usage" if args.empty?
+
+    hash = { :host => args.first }
+    hash[:keypath] = options.keypath unless options.keypath.nil?
+    hash[:user] = options.user unless options.user.nil?
+    hash[:port] = options.port unless options.port.nil?
+    hash[:tags] = options.tags unless options.tags.nil?
+    
+    update_node_list { |nodes| nodes << hash }
+  end
+end
+
+command :list_nodes do |c|
+  # TODO: Make tag searching AND or OR, not just OR
+  c.syntax = "rutty list_nodes [options]"
+  c.summary = "List nodes according to [options]."
+  c.description = "#{c.summary} Options are the same as add_node"
+  
+  c.example "List all nodes", "rutty list_nodes"
+  c.example "List all nodes that are tagged with 'web' OR 'db'", "rutty list_nodes --tags web,db"
+  c.example "List all nodes configued to SSH into port 2222", "rutty list_nodes --port 2222"
+  
+  c.option('--keypath PATH', String, 'Path to the private key to search for')
+  c.option('--user NAME', String, 'User login to search for')
+  c.option('--port NUMBER', Integer, 'SSH port number to search for')
+  c.option('--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of tags to filter')
+  
+  c.when_called do |args, options|
+    check_installed!    
+    require 'pp'
+    
+    nodes = get_node_list
+    filter_nodes nodes, options
+
+    pp nodes
+  end
+end
+
+command :dsh do |c|
+  c.syntax = "rutty [options] COMMAND"
+  c.summary = "Runs the specified COMMAND across all nodes that match [options]"
+  
+  c.example "Get a list of all users logged in to all your web and app nodes", "rutty --tags web,app w"
+  c.example "See all your nodes' current memory footprint", "rutty -a \"free -m\""
+  
+  c.option('--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of tags to run the command on')
+  c.option('-a', 'Run the command on ALL nodes')
+  
+  c.when_called do |args, options|
+    check_installed!
+    raise "Must supply a command to run. See `rutty help dsh' for usage" if args.empty?
+    raise "One of -a or --tags must be passed" if options.a.nil? and options.tags.nil?
+    raise "Use either -a or --tags, not both" if !options.a.nil? and !options.tags.nil?
+    raise "Multi-word commands must be enclosed in quotes (ex. rutty -a \"ps -ef | grep httpd\")" if args.length > 1
+    
+    com_str = args.pop
+    
+    nodes = get_node_list
+    filter_nodes nodes, options
+    
+    require 'thread'
+    require 'pp'
+    
+    Thread.abort_on_exception = true
+    
+    @returns = {}
+    threads = []
+    
+    nodes.each do |node|
+      threads << Thread.new do
+        out = %x{#{ssh_for_node(node)} "#{com_str}"}
+        @returns[node[:host]] = { :code => $?.exitstatus, :output => out }
+      end
+    end
+    
+    # Wait for the threads
+    threads.each do |thread|
+      retry unless thread.status === false or thread.status.nil?
+    end
+    
+    # TODO: Print this out in a better way
+    # TODO: Print a special alert for exit codes > 0
+    
+    pp @returns
+  end
+end
+
+command :scp do |c|
+  c.when_called do |args, options|
+    check_installed!
+    
+    
+  end
+end

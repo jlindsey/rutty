@@ -124,7 +124,8 @@ command :add_node do |c|
   c.description = "#{c.summary} This is just a convenience method, you can also add a node directly to $HOME/.rutty/nodes.yaml"
   
   c.example "Add the 'localhost' node with just a keypath", "rutty add_node localhost --keypath ~/.ssh/my_key.pem"
-  c.example "Add a remote IP with all the options", "rutty add_node 192.168.1.100 --keypath ~/.ssh/my_key.pem --user root --tags local,funtimes,awesome"
+  c.example "Add a remote IP with all the options", 
+    "rutty add_node 192.168.1.100 --keypath ~/.ssh/my_key.pem --user root --tags local,funtimes,awesome"
   
   c.option('--keypath PATH', String, 'Path to the private key to use for this node')
   c.option('--user NAME', String, 'User to login as on this node')

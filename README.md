@@ -25,3 +25,8 @@ TODO
 * Implement scp command using Net::SCP
 * Implement delete_node command
 * Make better printouts
+
+Copyright
+---------
+
+Copyright (c) 2010 Josh Lindsey at Cloudspace. See LICENSE for details.

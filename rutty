@@ -5,8 +5,6 @@ CONF_DIR = File.join(ENV['HOME'], '.rutty')
 GENERAL_CONF = File.join(CONF_DIR, 'defaults.yaml')
 NODES_CONF = File.join(CONF_DIR, 'nodes.yaml')
 
-BASE_SSH = %{ssh -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p %i -i %s %s@%s 2>&1}
-
 # Gems
 require 'rubygems'
 require 'bundler/setup'
@@ -49,21 +47,21 @@ def filter_nodes nodes, options
   nodes.delete_if { |node| node[:tags].nil? or (node[:tags] & options.tags).empty? } unless options.tags.nil?
 end
 
-def ssh_for_node node
-  values = []
+def options_for_node node
+  hash = node
   
-  values << ((node[:port].nil? && get_defaults_config[:port]) || node[:port])
-  values << ((node[:keypath].nil? && get_defaults_config[:keypath]) || node[:keypath])
-  values << ((node[:user].nil? && get_defaults_config[:user]) || node[:user])
-  values << node[:host]
+  hash[:user] ||= get_defaults_config[:user]
+  hash[:port] ||= get_defaults_config[:port]
+  hash[:keypath] ||= get_defaults_config[:keypath]
+  # :host will always be set on node
   
-  BASE_SSH % values
+  hash
 end
 
 # Commander config
 program :name, 'rutty'
 program :description, 'A DSH implementation in Ruby'
-program :version, '0.2.1'
+program :version, '0.3.0'
 program :help_formatter, Commander::HelpFormatter::TerminalCompact
 
 default_command :dsh
@@ -183,6 +181,8 @@ command :dsh do |c|
   c.option('-a', 'Run the command on ALL nodes')
   
   c.when_called do |args, options|
+    # TODO: Clean this up, it's pretty hard to read and follow
+    
     check_installed!
     raise "Must supply a command to run. See `rutty help dsh' for usage" if args.empty?
     raise "One of -a or --tags must be passed" if options.a.nil? and options.tags.nil?
@@ -194,24 +194,58 @@ command :dsh do |c|
     nodes = get_node_list
     filter_nodes nodes, options
     
-    require 'thread'
+    require 'logger'
+    require 'net/ssh'
     require 'pp'
     
-    Thread.abort_on_exception = true
-    
     @returns = {}
-    threads = []
+    connections = []
+    
+    # This is necessary in order to capture exit codes and/or signals, 
+    # which are't passed through when using just the ssh.exec!() semantics.
+    exec_command = lambda { |ssh| 
+      ssh.open_channel do |channel| 
+        channel.exec(com_str) do |ch, success| 
+          unless success 
+            abort "FAILED: couldn't execute command (ssh.channel.exec   
+            failure)" 
+          end 
+          
+          channel.on_data do |ch, data|  # stdout 
+            @returns[ssh.host][:out] << data
+          end 
+          
+          channel.on_extended_data do |ch, type, data| 
+            next unless type == 1  # only handle stderr 
+            @returns[ssh.host][:out] << data
+          end 
+          
+          channel.on_request("exit-status") do |ch, data| 
+            exit_code = data.read_long 
+            @returns[ssh.host][:exit] = exit_code
+          end 
+          
+          channel.on_request("exit-signal") do |ch, data| 
+            @returns[ssh.host][:sig] = data.read_long
+          end 
+        end 
+      end 
+      ssh.loop
+    }
     
     nodes.each do |node|
-      threads << Thread.new do
-        out = %x{#{ssh_for_node(node)} "#{com_str}"}
-        @returns[node[:host]] = { :code => $?.exitstatus, :output => out }
-      end
+      params = options_for_node(node)
+      @returns[node[:host]] = { :out => '' }
+      connections << Net::SSH.start(params[:host], params[:user], :port => params[:port], :paranoid => false, 
+        :user_known_hosts_file => '/dev/null', :keys => [params[:keypath]], :logger => Logger.new($stderr),
+        :verbose => Logger::FATAL)
     end
     
-    # Wait for the threads
-    threads.each do |thread|
-      retry unless thread.status === false or thread.status.nil?
+    connections.each { |ssh| exec_command.call(ssh) }
+    
+    loop do
+      connections.delete_if { |ssh| !ssh.process(0.1) { |s| s.busy? } }
+      break if connections.empty?
     end
     
     # TODO: Print this out in a better way

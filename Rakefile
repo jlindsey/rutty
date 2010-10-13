@@ -15,9 +15,9 @@ begin
     gem.homepage = "http://github.com/jlindsey/rutty"
     gem.authors = ["Josh Lindsey"]
     gem.add_development_dependency "bundler", ">= 1.0.0"
-    gem.add_dependency "commander", ">= 0"
-    gem.add_dependency "net-ssh", ">= 0"
-    gem.add_dependency "net-scp", ">= 0"
+    gem.add_dependency "commander", ">= 4.0.3"
+    gem.add_dependency "net-ssh", ">= 2.0.23"
+    gem.add_dependency "net-scp", ">= 1.0.4"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError

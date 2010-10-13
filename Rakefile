@@ -4,14 +4,20 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "rutty_jeweler"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.name = "rutty"
+    gem.summary = %Q{A DSH implementation in Ruby}
+    gem.description = %Q{
+      RuTTY is a DSH (distributed / dancer's shell) written in Ruby. It's used to run commands 
+      on multiple remote servers at once, based on a tagging system. Also allows for multiple
+      SCP-style uploads.
+    }
     gem.email = "josh@cloudspace.com"
-    gem.homepage = "http://github.com/jlindsey/rutty_jeweler"
+    gem.homepage = "http://github.com/jlindsey/rutty"
     gem.authors = ["Josh Lindsey"]
-    gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
+    gem.add_development_dependency "bundler", ">= 1.0.0"
+    gem.add_dependency "commander", ">= 0"
+    gem.add_dependency "net-ssh", ">= 0"
+    gem.add_dependency "net-scp", ">= 0"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError

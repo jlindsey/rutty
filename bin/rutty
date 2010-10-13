@@ -65,10 +65,21 @@ def options_for_node node
   hash
 end
 
+def get_version
+  Gem.path.each do |path|
+    file = Dir.glob(File.join(path, 'gems', 'rutty-*', 'VERSION')).sort
+    next if file.empty?
+  
+    return File.open(file.pop, 'r').read.chomp
+  end
+  
+  return false
+end
+
 # Commander config
 program :name, 'rutty'
 program :description, 'A DSH implementation in Ruby'
-program :version, '1.0.0'
+program :version, get_version
 program :help_formatter, Commander::HelpFormatter::TerminalCompact
 
 default_command :dsh

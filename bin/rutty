@@ -191,10 +191,11 @@ command :dsh do |c|
   
   c.option('--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of tags to run the command on')
   c.option('-a', 'Run the command on ALL nodes')
+  c.option('-d', '--debug', 'Enable debug output')
   
   c.when_called do |args, options|
     # TODO: Clean this up, it's pretty hard to read and follow
-    
+
     check_installed!
     raise "Must supply a command to run. See `rutty help dsh' for usage" if args.empty?
     raise "One of -a or --tags must be passed" if options.a.nil? and options.tags.nil?
@@ -249,8 +250,9 @@ command :dsh do |c|
       params = options_for_node(node)
       @returns[node[:host]] = { :out => '' }
       connections << Net::SSH.start(params[:host], params[:user], :port => params[:port], :paranoid => false, 
-        :user_known_hosts_file => '/dev/null', :keys => [params[:keypath]], :logger => Logger.new($stderr),
-        :verbose => Logger::FATAL)
+        :user_known_hosts_file => '/dev/null', :keys => [params[:keypath]], 
+        :logger => Logger.new(options.debug.nil? ? $stderr : $stdout),
+        :verbose => (options.debug.nil? ? Logger::FATAL : Logger::DEBUG))
     end
     
     connections.each { |ssh| exec_command.call(ssh) }
@@ -274,6 +276,7 @@ command :scp do |c|
   
   c.option('--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of tags to run the command on')
   c.option('-a', 'Run the command on ALL nodes')
+  c.option('-d', '--debug', 'Enable debug output')
   
   c.when_called do |args, options|
     check_installed!
@@ -296,8 +299,9 @@ command :scp do |c|
     nodes.each do |node|
       params = options_for_node(node)
       connections << Net::SSH.start(params[:host], params[:user], :port => params[:port], :paranoid => false, 
-        :user_known_hosts_file => '/dev/null', :keys => [params[:keypath]], :logger => Logger.new($stderr),
-        :verbose => Logger::FATAL)
+        :user_known_hosts_file => '/dev/null', :keys => [params[:keypath]], 
+        :logger => Logger.new(options.debug.nil? ? $stderr : $stdout),
+        :verbose => (options.debug.nil? ? Logger::FATAL : Logger::DEBUG))
     end
     
     connections.each { |ssh| ssh.scp.upload! local_path, remote_path }

@@ -28,6 +28,7 @@ TODO
 * Implement delete_node command
 * Make better printouts
 * Documentation
+* Tests
 
 Copyright
 ---------

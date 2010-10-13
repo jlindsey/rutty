@@ -249,10 +249,14 @@ command :dsh do |c|
     nodes.each do |node|
       params = options_for_node(node)
       @returns[node[:host]] = { :out => '' }
-      connections << Net::SSH.start(params[:host], params[:user], :port => params[:port], :paranoid => false, 
-        :user_known_hosts_file => '/dev/null', :keys => [params[:keypath]], 
-        :logger => Logger.new(options.debug.nil? ? $stderr : $stdout),
-        :verbose => (options.debug.nil? ? Logger::FATAL : Logger::DEBUG))
+      begin
+        connections << Net::SSH.start(params[:host], params[:user], :port => params[:port], :paranoid => false, 
+          :user_known_hosts_file => '/dev/null', :keys => [params[:keypath]], 
+          :logger => Logger.new(options.debug.nil? ? $stderr : $stdout),
+          :verbose => (options.debug.nil? ? Logger::FATAL : Logger::DEBUG))
+      rescue Errno::ECONNREFUSED
+        $stderr.puts "ERROR: Connection refused on #{node[:host]}"
+      end
     end
     
     connections.each { |ssh| exec_command.call(ssh) }
@@ -298,10 +302,14 @@ command :scp do |c|
     
     nodes.each do |node|
       params = options_for_node(node)
-      connections << Net::SSH.start(params[:host], params[:user], :port => params[:port], :paranoid => false, 
-        :user_known_hosts_file => '/dev/null', :keys => [params[:keypath]], 
-        :logger => Logger.new(options.debug.nil? ? $stderr : $stdout),
-        :verbose => (options.debug.nil? ? Logger::FATAL : Logger::DEBUG))
+      begin
+        connections << Net::SSH.start(params[:host], params[:user], :port => params[:port], :paranoid => false, 
+          :user_known_hosts_file => '/dev/null', :keys => [params[:keypath]], 
+          :logger => Logger.new(options.debug.nil? ? $stderr : $stdout),
+          :verbose => (options.debug.nil? ? Logger::FATAL : Logger::DEBUG))
+      rescue Errno::ECONNREFUSED
+        $stderr.puts "ERROR: Connection refused on #{node[:host]}"
+      end
     end
     
     connections.each { |ssh| ssh.scp.upload! local_path, remote_path }

@@ -251,11 +251,15 @@ command :dsh do |c|
       @returns[node[:host]] = { :out => '' }
       begin
         connections << Net::SSH.start(params[:host], params[:user], :port => params[:port], :paranoid => false, 
-          :user_known_hosts_file => '/dev/null', :keys => [params[:keypath]], 
-          :logger => Logger.new(options.debug.nil? ? $stderr : $stdout),
-          :verbose => (options.debug.nil? ? Logger::FATAL : Logger::DEBUG))
+        :user_known_hosts_file => '/dev/null', :keys => [params[:keypath]], 
+        :logger => Logger.new(options.debug.nil? ? $stderr : $stdout),
+        :verbose => (options.debug.nil? ? Logger::FATAL : Logger::DEBUG))
       rescue Errno::ECONNREFUSED
         $stderr.puts "ERROR: Connection refused on #{node[:host]}"
+        @returns.delete node[:host]
+      rescue SocketError
+        $stderr.puts "ERROR: nodename nor servname provided, or not known for #{node[:host]}"
+        @returns.delete node[:host]
       end
     end
     
@@ -309,6 +313,8 @@ command :scp do |c|
           :verbose => (options.debug.nil? ? Logger::FATAL : Logger::DEBUG))
       rescue Errno::ECONNREFUSED
         $stderr.puts "ERROR: Connection refused on #{node[:host]}"
+      rescue SocketError
+        $stderr.puts "ERROR: nodename nor servname provided, or not known for #{node[:host]}"
       end
     end
     

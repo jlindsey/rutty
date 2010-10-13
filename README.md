@@ -22,6 +22,9 @@ Installation
 TODO
 ----
 
+* Cleanup dsh action code
+* Expand the tag searching semantics to allow for AND and/or OR queries
+* Add a special printout for > 0 exit codes on dsh action
 * Implement delete_node command
 * Make better printouts
 * Documentation

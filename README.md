@@ -13,6 +13,7 @@ Requirements
 Installation
 ------------
 
+	$ sudo gem install bundler
 	$ git clone git://github.com/jlindsey/rutty.git
 	$ cd rutty
 	$ bundle install

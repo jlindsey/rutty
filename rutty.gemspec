@@ -23,13 +23,15 @@ Gem::Specification.new do |s|
      "README.md"
   ]
   s.files = [
-    "Gemfile",
+    ".gitignore",
+     "Gemfile",
      "Gemfile.lock",
      "LICENSE",
      "README.md",
      "Rakefile",
      "VERSION",
-     "bin/rutty"
+     "bin/rutty",
+     "rutty.gemspec"
   ]
   s.homepage = %q{http://github.com/jlindsey/rutty}
   s.rdoc_options = ["--charset=UTF-8"]

@@ -3,15 +3,26 @@ GEM
   specs:
     commander (4.0.3)
       highline (>= 1.5.0)
+    gemcutter (0.5.0)
+      json_pure
+    git (1.2.5)
     highline (1.6.1)
+    jeweler (1.4.0)
+      gemcutter (>= 0.1.0)
+      git (>= 1.2.5)
+      rubyforge (>= 2.0.0)
+    json_pure (1.4.3)
     net-scp (1.0.4)
       net-ssh (>= 1.99.1)
     net-ssh (2.0.23)
+    rubyforge (2.0.4)
+      json_pure (>= 1.1.7)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   commander
+  jeweler
   net-scp
   net-ssh

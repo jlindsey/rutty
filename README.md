@@ -21,7 +21,6 @@ Installation
 TODO
 ----
 
-* Implement scp command using Net::SCP
 * Implement delete_node command
 * Make better printouts
 * Documentation

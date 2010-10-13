@@ -12,6 +12,13 @@ require 'commander/import'
 require 'yaml'
 
 # Helpers
+add_filter_options = lambda { |c| 
+  c.option('--keypath PATH', String, 'Path to a private key')
+  c.option('--user NAME', String, 'User login')
+  c.option('--port NUMBER', Integer, 'SSH port number')
+  c.option('--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of tags')
+}
+
 def update_node_list &block
   ary = YAML.load(File.open(NODES_CONF).read)
   
@@ -61,7 +68,7 @@ end
 # Commander config
 program :name, 'rutty'
 program :description, 'A DSH implementation in Ruby'
-program :version, '0.3.0'
+program :version, '1.0.0'
 program :help_formatter, Commander::HelpFormatter::TerminalCompact
 
 default_command :dsh
@@ -125,10 +132,7 @@ command :add_node do |c|
   c.example "Add a remote IP with all the options", 
     "rutty add_node 192.168.1.100 --keypath ~/.ssh/my_key.pem --user root --tags local,funtimes,awesome"
   
-  c.option('--keypath PATH', String, 'Path to the private key to use for this node')
-  c.option('--user NAME', String, 'User to login as on this node')
-  c.option('--port NUMBER', Integer, 'Port number SSH is running on on this node')
-  c.option('--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of strings to tag this node with')
+  add_filter_options.call(c)
   
   c.when_called do |args, options|
     check_installed!
@@ -154,10 +158,7 @@ command :list_nodes do |c|
   c.example "List all nodes that are tagged with 'web' OR 'db'", "rutty list_nodes --tags web,db"
   c.example "List all nodes configued to SSH into port 2222", "rutty list_nodes --port 2222"
   
-  c.option('--keypath PATH', String, 'Path to the private key to search for')
-  c.option('--user NAME', String, 'User login to search for')
-  c.option('--port NUMBER', Integer, 'SSH port number to search for')
-  c.option('--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of tags to filter')
+  add_filter_options.call(c)
   
   c.when_called do |args, options|
     check_installed!    
@@ -171,7 +172,7 @@ command :list_nodes do |c|
 end
 
 command :dsh do |c|
-  c.syntax = "rutty [options] COMMAND"
+  c.syntax = "rutty [dsh] [options] COMMAND"
   c.summary = "Runs the specified COMMAND across all nodes that match [options]"
   
   c.example "Get a list of all users logged in to all your web and app nodes", "rutty --tags web,app w"
@@ -256,9 +257,43 @@ command :dsh do |c|
 end
 
 command :scp do |c|
+  c.syntax = "rutty scp [options] LOCAL_PATH REMOTE_PATH"
+  c.summary = "Uploads a file to the nodes according to [options]."
+  c.description = "#{c.summary} Unlike the actual scp command, this action is one-way: upload only."
+  
+  c.option('--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of tags to run the command on')
+  c.option('-a', 'Run the command on ALL nodes')
+  
   c.when_called do |args, options|
     check_installed!
+    raise "Must supply a local path and a remote path" unless args.length == 2
+    raise "One of -a or --tags must be passed" if options.a.nil? and options.tags.nil?
+    raise "Use either -a or --tags, not both" if !options.a.nil? and !options.tags.nil?
     
+    require 'logger'
+    require 'net/ssh'
+    require 'net/scp'
+    require 'pp'
     
+    connections = []
+    
+    remote_path = args.pop
+    local_path = args.pop
+    
+    nodes = filter_nodes get_node_list, options
+    
+    nodes.each do |node|
+      params = options_for_node(node)
+      connections << Net::SSH.start(params[:host], params[:user], :port => params[:port], :paranoid => false, 
+        :user_known_hosts_file => '/dev/null', :keys => [params[:keypath]], :logger => Logger.new($stderr),
+        :verbose => Logger::FATAL)
+    end
+    
+    connections.each { |ssh| ssh.scp.upload! local_path, remote_path }
+    
+    loop do
+      connections.delete_if { |ssh| !ssh.process(0.1) { |s| s.busy? } }
+      break if connections.empty?
+    end
   end
 end

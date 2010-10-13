@@ -117,18 +117,8 @@ command :init do |c|
     else
       log "create", NODES_CONF
       
-      default_node = [
-        {
-          :host => 'localhost',
-          :port => 2222,
-          :keypath => File.join(ENV['HOME'], '.ssh', 'my_key.pem'),
-          :user => 'nobody',
-          :tags => %w(delete_me example localhost)
-        }
-      ]
-      
       File.open(NODES_CONF, 'w') do |f|
-        YAML.dump(default_node, f)
+        YAML.dump([], f)
       end
     end
   end

@@ -3,7 +3,7 @@ module Rutty
     MAJOR = 1
     MINOR = 1
     PATCH = 3
-    BUILD = ''
+    BUILD = nil
 
     STRING = [MAJOR, MINOR, PATCH, BUILD].compact.join('.')
   end

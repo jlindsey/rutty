@@ -2,10 +2,10 @@
 module Rutty
   class Config
     class << self
-      def load_file file
+      def load_config
         require 'yaml'
         
-        data = YAML.load(File.open(file).read)
+        data = YAML.load(File.open(Rutty::Consts::GENERAL_CONF).read)
         Rutty::Config.new data
       end
     end

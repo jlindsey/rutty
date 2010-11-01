@@ -31,6 +31,15 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "bin/rutty",
+     "lib/rutty.rb",
+     "lib/rutty/actions.rb",
+     "lib/rutty/config.rb",
+     "lib/rutty/consts.rb",
+     "lib/rutty/errors.rb",
+     "lib/rutty/helpers.rb",
+     "lib/rutty/node.rb",
+     "lib/rutty/nodes.rb",
+     "lib/rutty/version.rb",
      "rutty.gemspec"
   ]
   s.homepage = %q{http://github.com/jlindsey/rutty}

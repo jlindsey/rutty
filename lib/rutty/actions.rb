@@ -61,10 +61,10 @@ module Rutty
       # TODO: Clean this up, it's pretty hard to read and follow
 
       check_installed!
-      raise "Must supply a command to run. See `rutty help dsh' for usage" if args.empty?
-      raise "One of -a or --tags must be passed" if options.a.nil? and options.tags.nil?
-      raise "Use either -a or --tags, not both" if !options.a.nil? and !options.tags.nil?
-      raise "Multi-word commands must be enclosed in quotes (ex. rutty -a \"ps -ef | grep httpd\")" if args.length > 1
+      raise Rutty::BadUsage.new "Must supply a command to run. See `rutty help dsh' for usage" if args.empty?
+      raise Rutty::BadUsage.new "One of -a or --tags must be passed" if options.a.nil? and options.tags.nil?
+      raise Rutty::BadUsage.new "Use either -a or --tags, not both" if !options.a.nil? and !options.tags.nil?
+      raise Rutty::BadUsage.new "Multi-word commands must be enclosed in quotes (ex. rutty -a \"ps -ef | grep httpd\")" if args.length > 1
 
       com_str = args.pop
 
@@ -138,9 +138,9 @@ module Rutty
 
     def scp args, options
       check_installed!
-      raise "Must supply a local path and a remote path" unless args.length == 2
-      raise "One of -a or --tags must be passed" if options.a.nil? and options.tags.nil?
-      raise "Use either -a or --tags, not both" if !options.a.nil? and !options.tags.nil?
+      raise Rutty::BadUsage.new "Must supply a local path and a remote path" unless args.length == 2
+      raise Rutty::BadUsage.new "One of -a or --tags must be passed" if options.a.nil? and options.tags.nil?
+      raise Rutty::BadUsage.new "Use either -a or --tags, not both" if !options.a.nil? and !options.tags.nil?
 
       require 'logger'
       require 'net/ssh'

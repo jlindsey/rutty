@@ -3,6 +3,8 @@ require 'rubygems'
 require 'commander/import'
 require 'rutty'
 
+$r = Rutty::Runner.new
+
 # Helpers
 add_filter_options = lambda { |c| 
   c.option('--keypath PATH', String, 'Path to a private key')
@@ -14,7 +16,7 @@ add_filter_options = lambda { |c|
 # Commander config
 program :name, 'rutty'
 program :description, 'A DSH implementation in Ruby'
-program :version, get_version
+program :version, $r.get_version
 program :help_formatter, Commander::HelpFormatter::TerminalCompact
 
 default_command :dsh

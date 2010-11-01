@@ -49,8 +49,8 @@ module Rutty
       hash[:port] = options.port unless options.port.nil?
       hash[:tags] = options.tags unless options.tags.nil?
       
-      nodes << Rutty::Node.new(hash, self.config)
-      nodes.write_config
+      self.nodes << Rutty::Node.new(hash, self.config.to_hash)
+      self.nodes.write_config
     end
 
     def list_nodes args, options

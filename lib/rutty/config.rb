@@ -33,6 +33,10 @@ module Rutty
       end
     end
 
+    def to_hash
+      @data
+    end
+    
     def method_missing(sym, *args)
       if sym.to_s =~ /(.+)=$/
         self[$1] = args.first

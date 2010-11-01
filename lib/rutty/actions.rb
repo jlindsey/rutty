@@ -41,8 +41,6 @@ module Rutty
       raise Rutty::BadUsage.new "Must supply a hostname or IP address. 
       See `rutty help add_node' for usage" if args.empty?
 
-      # TODO: Use Node objects here
-
       hash = { :host => args.first }
       hash[:keypath] = options.keypath unless options.keypath.nil?
       hash[:user] = options.user unless options.user.nil?

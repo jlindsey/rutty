@@ -17,12 +17,14 @@ GEM
     net-ssh (2.0.23)
     rubyforge (2.0.4)
       json_pure (>= 1.1.7)
+    thoughtbot-shoulda (2.11.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  commander
-  jeweler
-  net-scp
-  net-ssh
+  commander (~> 4.0.3)
+  jeweler (~> 1.4.0)
+  net-scp (~> 1.0.4)
+  net-ssh (~> 2.0.23)
+  thoughtbot-shoulda

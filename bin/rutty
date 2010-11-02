@@ -26,8 +26,7 @@ command :init do |c|
   c.syntax = "rutty init"
   c.summary = "Creates the default file structure for rutty."
   c.when_called do
-    r = Rutty::Runner.new
-    r.init
+    $r.init
   end
 end
 
@@ -43,8 +42,7 @@ command :add_node do |c|
   add_filter_options.call(c)
   
   c.when_called do |args, options|
-    r = Rutty::Runner.new
-    r.add_node args, options
+    $r.add_node args, options
   end
 end
 
@@ -61,8 +59,7 @@ command :list_nodes do |c|
   add_filter_options.call(c)
   
   c.when_called do |args, options|
-    r = Rutty::Runner.new
-    r.list_nodes args, options
+    $r.list_nodes args, options
   end
 end
 
@@ -78,8 +75,7 @@ command :dsh do |c|
   c.option('-d', '--debug', 'Enable debug output')
   
   c.when_called do |args, options|
-    r = Rutty::Runner.new
-    r.dsh args, options
+    $r.dsh args, options
   end
 end
 
@@ -93,8 +89,7 @@ command :scp do |c|
   c.option('-d', '--debug', 'Enable debug output')
   
   c.when_called do |args, options|
-    r = Rutty::Runner.new
-    r.dsh args, options
+    $r.dsh args, options
   end
 end
 

@@ -1,6 +1,6 @@
 require 'helper'
 
-class TestRuttyConsts < Test::Unit::TestCase
+class TestConsts < Test::Unit::TestCase
   context "The Rutty::Consts module" do
     should "have all the constants set" do
       assert_not_nil Rutty::Consts::CONF_DIR

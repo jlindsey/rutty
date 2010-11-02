@@ -7,4 +7,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rutty'
 
 class Test::Unit::TestCase
+  def call_init
+    %x(#{File.join File.dirname(__FILE__), '..', 'bin', 'rutty'} init)
+  end
 end

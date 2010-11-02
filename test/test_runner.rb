@@ -4,7 +4,7 @@ class TestRunner < Test::Unit::TestCase
   context "A Runner instance" do
     setup { 
       @r = Rutty::Runner.new 
-      %x(#{File.join File.dirname(__FILE__), '..', 'bin', 'rutty'} init)
+      call_init
     }
     
     should "respond to config" do

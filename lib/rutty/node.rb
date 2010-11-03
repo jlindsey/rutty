@@ -15,5 +15,13 @@ module Rutty
     def <=> other
       self.host <=> other.host
     end
+    
+    def == other
+      self.host == other.host and
+      self.port == other.port and
+      self.user == other.user and
+      self.keypath == other.keypath and
+      self.tags == other.tags
+    end
   end
 end

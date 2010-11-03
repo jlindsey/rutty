@@ -15,10 +15,10 @@ module Rutty
       
       ary = Array.new self
       
-      ary.reject! { |n| n.keypath == opts[:keypath] } unless opts[:keypath].nil?
-      ary.reject! { |n| n.user == opts[:user] } unless opts[:user].nil?
-      ary.reject! { |n| n.port == opts[:port] } unless opts[:port].nil?
-      ary.reject! { |n| !(n.tags & opts[:tags]).empty? } unless opts[:tags].nil?
+      ary.reject! { |n| n.keypath != opts[:keypath] } unless opts[:keypath].nil?
+      ary.reject! { |n| n.user != opts[:user] } unless opts[:user].nil?
+      ary.reject! { |n| n.port != opts[:port] } unless opts[:port].nil?
+      ary.reject! { |n| (n.tags & opts[:tags]).empty? } unless opts[:tags].nil?
       
       ary
     end

@@ -31,4 +31,10 @@ class Test::Unit::TestCase
     clean_test_config
     call_init
   end
+  
+  def assert_file_exists path
+    assert_block "#{path} does not exist" do
+      File.exists? path
+    end
+  end
 end

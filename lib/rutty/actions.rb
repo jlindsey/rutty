@@ -2,18 +2,21 @@ require 'rutty/consts'
 
 module Rutty
   module Actions
-    def init
-      if File.exists? Rutty::Consts::CONF_DIR
-        log "exists", Rutty::Consts::CONF_DIR
+    def init dir
+      general_file = File.join(dir, Rutty::Consts::GENERAL_CONF_FILE)
+      nodes_file = File.join(dir, Rutty::Consts::NODES_CONF_FILE)
+      
+      if File.exists? dir
+        log "exists", dir
       else
-        log "create", Rutty::Consts::CONF_DIR
-        Dir.mkdir Rutty::Consts::CONF_DIR
+        log "create", dir
+        Dir.mkdir dir
       end
 
-      if File.exists? Rutty::Consts::GENERAL_CONF
-        log "exists", Rutty::Consts::GENERAL_CONF
+      if File.exists? general_file
+        log "exists", general_file
       else
-        log "create", Rutty::Consts::GENERAL_CONF
+        log "create", general_file
 
         defaults_hash = { 
           :user => 'root', 
@@ -21,17 +24,17 @@ module Rutty
           :port => 22
         }
 
-        File.open(Rutty::Consts::GENERAL_CONF, 'w') do |f|
+        File.open(general_file, 'w') do |f|
           YAML.dump(defaults_hash, f)
         end
       end
 
-      if File.exists? Rutty::Consts::NODES_CONF
-        log "exists", Rutty::Consts::NODES_CONF
+      if File.exists? nodes_file
+        log "exists", nodes_file
       else
-        log "create", Rutty::Consts::NODES_CONF
+        log "create", nodes_file
 
-        File.open(Rutty::Consts::NODES_CONF, 'w') do |f|
+        File.open(nodes_file, 'w') do |f|
           YAML.dump([], f)
         end
       end

@@ -16,12 +16,12 @@ module Rutty
     include Rutty::Helpers
     include Rutty::Actions
   
-    def config
-      @config ||= Rutty::Config.load_config
+    def config file = Rutty::Consts::GENERAL_CONF
+      @config ||= Rutty::Config.load_config file
     end
   
-    def nodes
-      @nodes ||= Rutty::Nodes.load_config
+    def nodes file = Rutty::Consts::NODES_CONF
+      @nodes ||= Rutty::Nodes.load_config file
     end
   end
 end

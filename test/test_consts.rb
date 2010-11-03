@@ -9,6 +9,9 @@ class TestConsts < Test::Unit::TestCase
     end
     
     should "have the constants be the proper values" do
+      assert_equal Rutty::Consts::GENERAL_CONF_FILE, 'defaults.yaml'
+      assert_equal Rutty::Consts::NODES_CONF_FILE, 'nodes.yaml'
+      
       assert_equal Rutty::Consts::CONF_DIR, File.join(ENV['HOME'], '.rutty')
       assert_equal Rutty::Consts::GENERAL_CONF, File.join(Rutty::Consts::CONF_DIR, 'defaults.yaml')
       assert_equal Rutty::Consts::NODES_CONF, File.join(Rutty::Consts::CONF_DIR, 'nodes.yaml')

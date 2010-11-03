@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rutty}
-  s.version = "2.0.0"
+  s.version = "2.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Josh Lindsey"]
-  s.date = %q{2010-11-01}
+  s.date = %q{2010-11-03}
   s.default_executable = %q{rutty}
   s.description = %q{
       RuTTY is a DSH (distributed / dancer's shell) written in Ruby. It's used to run commands 
@@ -40,13 +40,29 @@ Gem::Specification.new do |s|
      "lib/rutty/node.rb",
      "lib/rutty/nodes.rb",
      "lib/rutty/version.rb",
-     "rutty.gemspec"
+     "rutty.gemspec",
+     "test/helper.rb",
+     "test/test_config.rb",
+     "test/test_consts.rb",
+     "test/test_helpers.rb",
+     "test/test_node.rb",
+     "test/test_nodes.rb",
+     "test/test_runner.rb"
   ]
   s.homepage = %q{http://github.com/jlindsey/rutty}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{A DSH implementation in Ruby}
+  s.test_files = [
+    "test/helper.rb",
+     "test/test_config.rb",
+     "test/test_consts.rb",
+     "test/test_helpers.rb",
+     "test/test_node.rb",
+     "test/test_nodes.rb",
+     "test/test_runner.rb"
+  ]
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
@@ -55,12 +71,14 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<bundler>, [">= 1.0.0"])
       s.add_development_dependency(%q<jeweler>, [">= 1.4.0"])
+      s.add_development_dependency(%q<thoughtbot-shoulda>, [">= 0"])
       s.add_runtime_dependency(%q<commander>, [">= 4.0.3"])
       s.add_runtime_dependency(%q<net-ssh>, [">= 2.0.23"])
       s.add_runtime_dependency(%q<net-scp>, [">= 1.0.4"])
     else
       s.add_dependency(%q<bundler>, [">= 1.0.0"])
       s.add_dependency(%q<jeweler>, [">= 1.4.0"])
+      s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
       s.add_dependency(%q<commander>, [">= 4.0.3"])
       s.add_dependency(%q<net-ssh>, [">= 2.0.23"])
       s.add_dependency(%q<net-scp>, [">= 1.0.4"])
@@ -68,6 +86,7 @@ Gem::Specification.new do |s|
   else
     s.add_dependency(%q<bundler>, [">= 1.0.0"])
     s.add_dependency(%q<jeweler>, [">= 1.4.0"])
+    s.add_dependency(%q<thoughtbot-shoulda>, [">= 0"])
     s.add_dependency(%q<commander>, [">= 4.0.3"])
     s.add_dependency(%q<net-ssh>, [">= 2.0.23"])
     s.add_dependency(%q<net-scp>, [">= 1.0.4"])

@@ -5,13 +5,13 @@ require 'rutty/version'
 module Rutty
   module Helpers
     def check_installed!
-      unless File.exists? Rutty::Consts::CONF_DIR
-        raise Rutty::NotInstalledError.new %Q(Can't find conf directory at #{Rutty::Consts::CONF_DIR}.
+      unless File.exists? self.config_dir
+        raise Rutty::NotInstalledError.new %Q(Can't find conf directory at #{self.config_dir}.
          Run `rutty init' first. (Or rutty --help for usage))
       end
     end
     
-    def get_version
+    def self.get_version
       Rutty::Version::STRING
     end
   end

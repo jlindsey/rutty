@@ -9,19 +9,26 @@ require 'rutty/nodes'
 
 module Rutty
   class Runner
-    attr_accessor :config
-    attr_accessor :nodes
+    attr_writer :config_dir
   
     include Rutty::Consts
     include Rutty::Helpers
     include Rutty::Actions
   
-    def config file = Rutty::Consts::GENERAL_CONF
-      @config ||= Rutty::Config.load_config file
+    def initialize config_dir = nil
+      self.config_dir = config_dir
     end
   
-    def nodes file = Rutty::Consts::NODES_CONF
-      @nodes ||= Rutty::Nodes.load_config file
+    def config
+      @config ||= Rutty::Config.load_config self.config_dir
+    end
+  
+    def nodes
+      @nodes ||= Rutty::Nodes.load_config self.config_dir
+    end
+    
+    def config_dir
+      (@config_dir.nil? && Rutty::Consts::CONF_DIR) || @config_dir
     end
   end
 end

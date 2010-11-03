@@ -51,13 +51,13 @@ module Rutty
       hash[:tags] = options.tags unless options.tags.nil?
       
       self.nodes << Rutty::Node.new(hash, self.config.to_hash)
-      self.nodes.write_config
+      self.nodes.write_config self.config_dir
     end
 
     def list_nodes args, options
       require 'pp'
 
-      pp nodes.filter(options)
+      pp self.nodes.filter(options)
     end
 
     def dsh args, options
@@ -84,8 +84,7 @@ module Rutty
         ssh.open_channel do |channel| 
           channel.exec(com_str) do |ch, success| 
             unless success 
-              abort "FAILED: couldn't execute command (ssh.channel.exec   
-              failure)" 
+              abort "FAILED: couldn't execute command (ssh.channel.exec failure)" 
             end 
 
             channel.on_data do |ch, data|  # stdout 
@@ -110,7 +109,7 @@ module Rutty
         ssh.loop
       }
 
-      nodes.filter(options).each do |node|
+      self.nodes.filter(options).each do |node|
         @returns[node.host] = { :out => '' }
         begin
           connections << Net::SSH.start(node.host, node.user, :port => node.port, :paranoid => false, 
@@ -155,7 +154,7 @@ module Rutty
       remote_path = args.pop
       local_path = args.pop
 
-      nodes.filter(options).each do |node|
+      self.nodes.filter(options).each do |node|
         begin
           connections << Net::SSH.start(node.host, node.user, :port => node.port, :paranoid => false, 
           :user_known_hosts_file => '/dev/null', :keys => [node.keypath], 

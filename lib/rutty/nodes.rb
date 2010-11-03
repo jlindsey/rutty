@@ -4,9 +4,9 @@ require 'rutty/consts'
 module Rutty
   class Nodes < Array
     class << self
-      def load_config file
+      def load_config dir
         require 'yaml'
-        Rutty::Nodes.new YAML.load(File.open(file).read)
+        Rutty::Nodes.new YAML.load(File.open(File.join(dir, Rutty::Consts::NODES_CONF_FILE)).read)
       end
     end
     
@@ -23,8 +23,8 @@ module Rutty
       ary
     end
     
-    def write_config
-      File.open(Rutty::Consts::NODES_CONF, 'w') do |f|
+    def write_config dir
+      File.open(File.join(dir, Rutty::Consts::NODES_CONF_FILE), 'w') do |f|
         YAML.dump(self, f)
       end
     end

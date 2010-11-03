@@ -18,20 +18,13 @@ add_filter_options = lambda { |c|
 # Commander config
 program :name, 'rutty'
 program :description, 'A DSH implementation in Ruby'
-program :version, $r.get_version
+program :version, Rutty::Helpers.get_version
 program :help_formatter, Commander::HelpFormatter::TerminalCompact
 
 default_command :dsh
 
 global_option '-c', '--config DIR', 'Directory to load configs from, defaults to ~/.rutty' do |dir|
-  begin
-    $r.config File.join(dir, Rutty::Consts::GENERAL_CONF_FILE)
-    $r.nodes File.join(dir, Rutty::Consts::NODES_CONF_FILE)
-  rescue Errno::ENOENT => e
-    if e.to_s =~ /No such file or directory - (.*)/
-      raise Rutty::NotInstalledError.new "Unable to find #{$1}. Maybe run `rutty init #{dir}' first?"
-    end
-  end
+  $r.config_dir = dir
 end
 
 # Commander commands

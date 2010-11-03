@@ -2,7 +2,7 @@ require 'helper'
 
 class TestConfig < Test::Unit::TestCase
   context "The Rutty::Config class" do
-    setup { call_init }
+    setup { ensure_fresh_config! }
     
     should "respond to #load_config" do
       assert_respond_to Rutty::Config, :load_config
@@ -11,7 +11,7 @@ class TestConfig < Test::Unit::TestCase
     should "properly load the general config file" do
       require 'yaml'
       
-      assert_equal YAML.load(File.open(Rutty::Consts::GENERAL_CONF).read), Rutty::Config.load_config.to_hash
+      assert_equal YAML.load(File.open(TEST_GENERAL_CONF).read), Rutty::Config.load_config(TEST_CONF_DIR).to_hash
     end
   end
   

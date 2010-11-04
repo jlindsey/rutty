@@ -20,7 +20,7 @@ class TestHelpers < Test::Unit::TestCase
     end
     
     should "correctly check the installation status" do
-      clean_test_config
+      clean_test_config!
       
       assert_raise Rutty::NotInstalledError do 
         @obj.check_installed!

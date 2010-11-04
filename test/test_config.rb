@@ -3,6 +3,7 @@ require 'helper'
 class TestConfig < Test::Unit::TestCase
   context "The Rutty::Config class" do
     setup { ensure_fresh_config! }
+    teardown { clean_test_config! }
     
     should "respond to #load_config" do
       assert_respond_to Rutty::Config, :load_config

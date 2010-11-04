@@ -7,6 +7,8 @@ class TestHelpers < Test::Unit::TestCase
       @obj = Rutty::Runner.new TEST_CONF_DIR
     end
     
+    teardown { clean_test_config! }
+    
     should "mixin its helper methods" do
       assert_respond_to @obj, :check_installed!
     end

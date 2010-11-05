@@ -1,5 +1,4 @@
 require 'rutty/config'
-require 'rutty/consts'
 
 module Rutty
   class Node < Config    

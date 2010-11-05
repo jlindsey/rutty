@@ -42,6 +42,7 @@ Gem::Specification.new do |s|
      "lib/rutty/version.rb",
      "rutty.gemspec",
      "test/helper.rb",
+     "test/test_action_add_node.rb",
      "test/test_action_init.rb",
      "test/test_actions.rb",
      "test/test_config.rb",
@@ -58,6 +59,7 @@ Gem::Specification.new do |s|
   s.summary = %q{A DSH implementation in Ruby}
   s.test_files = [
     "test/helper.rb",
+     "test/test_action_add_node.rb",
      "test/test_action_init.rb",
      "test/test_actions.rb",
      "test/test_config.rb",

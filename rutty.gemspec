@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rutty}
-  s.version = "2.1.0"
+  s.version = "2.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Josh Lindsey"]
-  s.date = %q{2010-11-03}
+  s.date = %q{2010-11-05}
   s.default_executable = %q{rutty}
   s.description = %q{
       RuTTY is a DSH (distributed / dancer's shell) written in Ruby. It's used to run commands 
@@ -42,6 +42,8 @@ Gem::Specification.new do |s|
      "lib/rutty/version.rb",
      "rutty.gemspec",
      "test/helper.rb",
+     "test/test_action_init.rb",
+     "test/test_actions.rb",
      "test/test_config.rb",
      "test/test_consts.rb",
      "test/test_helpers.rb",
@@ -56,6 +58,8 @@ Gem::Specification.new do |s|
   s.summary = %q{A DSH implementation in Ruby}
   s.test_files = [
     "test/helper.rb",
+     "test/test_action_init.rb",
+     "test/test_actions.rb",
      "test/test_config.rb",
      "test/test_consts.rb",
      "test/test_helpers.rb",

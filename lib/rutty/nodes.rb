@@ -4,7 +4,7 @@ require 'rutty/consts'
 module Rutty
   
   ##
-  # Simple wrapper class for {Rutty::Node} instances. Contains methods to load node data from file,
+  # Simple container class for {Rutty::Node} instances. Contains methods to load node data from file,
   # write data back to the file, and filter nodes based on user-supplied criteria.
   #
   # @author Josh Lindsey

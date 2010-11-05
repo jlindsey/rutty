@@ -12,7 +12,7 @@ module Rutty
   class Nodes < Array
     class << self
       ##
-      # Loads the config data from the yaml file contained in the specified dir.
+      # Loads the users's node data from the yaml file contained in the specified dir.
       #
       # @param [String] dir The directory to look in for the filename specified by {Rutty::Consts::NODES_CONF_FILE}
       # @return [Rutty::Nodes] The filled instance of {Rutty::Node} objects

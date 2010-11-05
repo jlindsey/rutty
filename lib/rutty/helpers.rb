@@ -1,5 +1,4 @@
 require 'rutty/errors'
-require 'rutty/consts'
 require 'rutty/version'
 
 module Rutty

@@ -1,7 +1,20 @@
 require 'rutty/consts'
 
 module Rutty
+  
+  ##
+  # The primary mixin module containing the code executed by the rutty bin's actions.
+  #
+  # @author Josh Lindsey
+  # @since 2.0.0
   module Actions
+    ##
+    # Initialize the Rutty config file structure in the specified directory, or
+    # report that the files already exist there.
+    #
+    # @see Rutty::Runner#config_dir
+    # @param [String] dir The directory to install into. {Rutty::Runner#config_dir} ensures
+    #   that this falls back to {Rutty::Consts::CONF_DIR} if not passed in by the user.
     def init dir
       general_file = File.join(dir, Rutty::Consts::GENERAL_CONF_FILE)
       nodes_file = File.join(dir, Rutty::Consts::NODES_CONF_FILE)
@@ -40,6 +53,12 @@ module Rutty
       end
     end
 
+    ##
+    # Add a new user-defined node to the datastore file.
+    #
+    # @see http://visionmedia.github.com/commander/
+    # @param [Array] args ARGV passed by the bin
+    # @param [Object] options The parsed options object as passed by the bin
     def add_node args, options
       raise Rutty::BadUsage.new "Must supply a hostname or IP address. 
       See `rutty help add_node' for usage" if args.empty?
@@ -54,12 +73,23 @@ module Rutty
       self.nodes.write_config self.config_dir
     end
 
+    ##
+    # List all the user-defined nodes currently stored in the datastore file.
+    #
+    # @see (see #add_node)
+    # @param (see #add_node)
     def list_nodes args, options
       require 'pp'
 
       pp self.nodes.filter(options)
     end
 
+    ##
+    # Cycle through all the user-defined nodes, filtered by the options, connect to them
+    # and run the specified command on them.
+    #
+    # @see (see #add_node)
+    # @param (see #add_node)
     def dsh args, options
       # TODO: Clean this up, it's pretty hard to read and follow
 
@@ -138,6 +168,12 @@ module Rutty
       pp @returns
     end
 
+    ##
+    # Cycle through all the user-defined nodes, filtered by the options, connect to them
+    # and upload the specified file(s).
+    #
+    # @see (see #add_node)
+    # @param (see #add_node)
     def scp args, options
       check_installed!
       raise Rutty::BadUsage.new "Must supply a local path and a remote path" unless args.length == 2

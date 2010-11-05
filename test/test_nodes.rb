@@ -9,6 +9,8 @@ class TestNodes < Test::Unit::TestCase
       @nodes = Rutty::Nodes.load_config TEST_CONF_DIR
     end
     
+    teardown { clean_test_config! }
+    
     should "return an instance of itself on #load_config" do
       assert_instance_of Rutty::Nodes, @nodes
     end
@@ -39,6 +41,8 @@ class TestNodes < Test::Unit::TestCase
                                :tags => %w(google fake test)
       @nodes = Rutty::Nodes.new [@node1, @node2]
     end
+    
+    teardown { clean_test_config! }
     
     should "correctly instantiate when passed an array" do
       assert_contains @nodes, @node1, @node2

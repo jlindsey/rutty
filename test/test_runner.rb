@@ -7,6 +7,8 @@ class TestRunner < Test::Unit::TestCase
       @r = Rutty::Runner.new TEST_CONF_DIR
     end
     
+    teardown { clean_test_config! }
+    
     should "respond to its methods" do
       assert_respond_to @r, :config
       assert_respond_to @r, :nodes

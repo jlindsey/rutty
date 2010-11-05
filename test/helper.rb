@@ -19,7 +19,7 @@ class Test::Unit::TestCase
     end
   end
   
-  def clean_test_config
+  def clean_test_config!
     %x(rm -rf #{TEST_CONF_DIR}) if File.exists? TEST_CONF_DIR
   end
   
@@ -28,7 +28,7 @@ class Test::Unit::TestCase
   end
   
   def ensure_fresh_config!
-    clean_test_config
+    clean_test_config!
     call_init
   end
   

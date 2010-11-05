@@ -2,7 +2,8 @@ require 'helper'
 
 class TestActionInit < Test::Unit::TestCase
   context "The `rutty init' action" do
-    setup { clean_test_config }
+    setup { clean_test_config! }
+    teardown { clean_test_config! }
     
     should "create the file structure if it doesn't exist" do
       out = %x(#{RUTTY_BIN} init #{TEST_CONF_DIR})

@@ -79,9 +79,23 @@ module Rutty
     # @see (see #add_node)
     # @param (see #add_node)
     def list_nodes args, options
-      require 'pp'
-
-      pp self.nodes.filter(options)
+      check_installed!
+      
+      if self.nodes.empty?
+        puts "No nodes defined"
+      else
+        require 'terminal-table/import'
+      
+        nodes_table = table do |t|
+          t.headings = 'Host', 'Key', 'User', 'Port', 'Tags'
+          self.nodes.each do |node|
+            tags = node.tags.nil? ? [] : node.tags
+            t << [node.host, node.keypath, node.user, node.port, tags.join(', ')]
+          end
+        end
+        
+        puts nodes_table
+      end
     end
 
     ##

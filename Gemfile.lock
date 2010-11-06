@@ -17,6 +17,7 @@ GEM
     net-ssh (2.0.23)
     rubyforge (2.0.4)
       json_pure (>= 1.1.7)
+    terminal-table (1.4.2)
     thoughtbot-shoulda (2.11.1)
 
 PLATFORMS
@@ -27,4 +28,5 @@ DEPENDENCIES
   jeweler (~> 1.4.0)
   net-scp (~> 1.0.4)
   net-ssh (~> 2.0.23)
+  terminal-table (~> 1.4.2)
   thoughtbot-shoulda

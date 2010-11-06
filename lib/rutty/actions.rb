@@ -166,7 +166,7 @@ module Rutty
           $stderr.puts "ERROR: Connection refused on #{node.host}"
           @returns.delete node.host
         rescue SocketError
-          $stderr.puts "ERROR: nodename nor servname provided, or not known for #{node[:host]}"
+          $stderr.puts "ERROR: no nodename nor servname provided, or not known for #{node[:host]}"
           @returns.delete node.host
         end
       end
@@ -178,10 +178,23 @@ module Rutty
         break if connections.empty?
       end
 
-      # TODO: Print this out in a better way
       # TODO: Print a special alert for exit codes > 0
 
-      pp @returns
+      min_width = 0
+      @returns.each do |host, hash|
+        min_width = host.length if host.length > min_width
+      end
+      
+      buffer = ''
+      @returns.each do |host, hash|
+        padded_host = String.new host
+        padded_host << (" " * (min_width - host.length)) if host.length < min_width
+        buffer << padded_host << "\t\t"
+        
+        buffer << hash[:out]
+      end
+      
+      puts buffer
     end
 
     ##

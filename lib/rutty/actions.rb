@@ -71,6 +71,8 @@ module Rutty
       
       self.nodes << Rutty::Node.new(hash, self.config.to_hash)
       self.nodes.write_config self.config_dir
+      
+      puts "Added #{hash[:host]}"
     end
 
     ##

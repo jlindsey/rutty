@@ -88,17 +88,45 @@ module Rutty
       if self.nodes.empty?
         say "<%= color('No nodes defined', :yellow) %>"
       else
-        require 'terminal-table/import'
+        output = case self.output_format
+          when 'human-readable'
+            require 'terminal-table/import'
       
-        nodes_table = table do |t|
-          t.headings = 'Host', 'Key', 'User', 'Port', 'Tags'
-          self.nodes.each do |node|
-            tags = node.tags.nil? ? [] : node.tags
-            t << [node.host, node.keypath, node.user, node.port, tags.join(', ')]
-          end
+            table do |t|
+              t.headings = 'Host', 'Key', 'User', 'Port', 'Tags'
+              self.nodes.each do |node|
+                tags = node.tags.nil? ? [] : node.tags
+                t << [node.host, node.keypath, node.user, node.port, tags.join(', ')]
+              end
+            end
+          
+          when 'json'
+           require 'json'
+           JSON.dump self.nodes.collect { |node| node.to_hash }
+           
+          when 'xml'
+            require 'builder'
+            xml = Builder::XmlMarkup.new(:indent => 2)
+           
+             xml.instruct!
+             xml.nodes do
+               self.nodes.each do |node|
+                 xml.node do
+                   xml.host node.host
+                   xml.user node.user
+                   xml.port node.port
+                   xml.keypath node.keypath
+                   xml.tags do
+                     node.tags.each do |tag|
+                       xml.tag tag
+                     end
+                   end
+                 end
+               end
+             end
         end
         
-        puts nodes_table
+        puts output
       end
     end
 

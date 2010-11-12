@@ -44,6 +44,7 @@ Gem::Specification.new do |s|
      "test/helper.rb",
      "test/test_action_add_node.rb",
      "test/test_action_init.rb",
+     "test/test_action_list_nodes.rb",
      "test/test_actions.rb",
      "test/test_config.rb",
      "test/test_consts.rb",
@@ -61,6 +62,7 @@ Gem::Specification.new do |s|
     "test/helper.rb",
      "test/test_action_add_node.rb",
      "test/test_action_init.rb",
+     "test/test_action_list_nodes.rb",
      "test/test_actions.rb",
      "test/test_config.rb",
      "test/test_consts.rb",
@@ -82,6 +84,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<terminal-table>, [">= 1.4.2"])
       s.add_runtime_dependency(%q<net-ssh>, [">= 2.0.23"])
       s.add_runtime_dependency(%q<net-scp>, [">= 1.0.4"])
+      s.add_runtime_dependency(%q<builder>, [">= 2.1.2"])
     else
       s.add_dependency(%q<bundler>, [">= 1.0.0"])
       s.add_dependency(%q<jeweler>, [">= 1.4.0"])
@@ -90,6 +93,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<terminal-table>, [">= 1.4.2"])
       s.add_dependency(%q<net-ssh>, [">= 2.0.23"])
       s.add_dependency(%q<net-scp>, [">= 1.0.4"])
+      s.add_dependency(%q<builder>, [">= 2.1.2"])
     end
   else
     s.add_dependency(%q<bundler>, [">= 1.0.0"])
@@ -99,6 +103,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<terminal-table>, [">= 1.4.2"])
     s.add_dependency(%q<net-ssh>, [">= 2.0.23"])
     s.add_dependency(%q<net-scp>, [">= 1.0.4"])
+    s.add_dependency(%q<builder>, [">= 2.1.2"])
   end
 end
 

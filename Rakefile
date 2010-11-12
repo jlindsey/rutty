@@ -21,6 +21,7 @@ begin
     gem.add_dependency "terminal-table", ">= 1.4.2"
     gem.add_dependency "net-ssh", ">= 2.0.23"
     gem.add_dependency "net-scp", ">= 1.0.4"
+    gem.add_dependency "builder", ">= 2.1.2"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError

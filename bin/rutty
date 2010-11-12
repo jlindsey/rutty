@@ -9,10 +9,10 @@ $r = Rutty::Runner.new
 
 # Helpers
 add_filter_options = lambda { |c| 
-  c.option('--keypath PATH', String, 'Path to a private key')
-  c.option('--user NAME', String, 'User login')
-  c.option('--port NUMBER', Integer, 'SSH port number')
-  c.option('--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of tags')
+  c.option('-k', '--keypath PATH', String, 'Path to a private key')
+  c.option('-u', '--user NAME', String, 'User login')
+  c.option('-p', '--port NUMBER', Integer, 'SSH port number')
+  c.option('-t', '--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of tags')
 }
 
 # Commander config
@@ -23,8 +23,12 @@ program :help_formatter, Commander::HelpFormatter::TerminalCompact
 
 default_command :dsh
 
-global_option '-c', '--config DIR', 'Directory to load configs from, defaults to ~/.rutty' do |dir|
+global_option '-c', '--config DIR', "Directory to load configs from, defaults to #{Rutty::Consts::CONF_DIR}" do |dir|
   $r.config_dir = dir
+end
+
+global_option '-o', '--output FORMAT', "Format to output into, defaults to #{Rutty::Consts::DEFAULT_OUTPUT_FORMAT}" do |format|
+  $r.output_format = format
 end
 
 # Commander commands

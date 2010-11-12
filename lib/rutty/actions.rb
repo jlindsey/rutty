@@ -22,16 +22,16 @@ module Rutty
       nodes_file = File.join(dir, Rutty::Consts::NODES_CONF_FILE)
       
       if File.exists? dir
-        log "exists", dir
+        log "\t<%= color('exists', :cyan) %>", dir
       else
-        log "create", dir
+        log "\t<%= color('create', :green) %>", dir
         Dir.mkdir dir
       end
 
       if File.exists? general_file
-        log "exists", general_file
+        log "\t<%= color('exists', :cyan) %>", general_file
       else
-        log "create", general_file
+        log "\t<%= color('create', :green) %>", general_file
 
         defaults_hash = { 
           :user => 'root', 
@@ -45,9 +45,9 @@ module Rutty
       end
 
       if File.exists? nodes_file
-        log "exists", nodes_file
+        log "\t<%= color('exists', :cyan) %>", nodes_file
       else
-        log "create", nodes_file
+        log "\t<%= color('create', :green) %>", nodes_file
 
         File.open(nodes_file, 'w') do |f|
           YAML.dump([], f)

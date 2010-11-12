@@ -9,4 +9,5 @@ gem "builder", '~> 2.1.2'
 group :development do
   gem "jeweler", '~> 1.4.0'
   gem "thoughtbot-shoulda"
+  gem "xml-simple", '~> 1.0.12'
 end

@@ -17,6 +17,7 @@ begin
     gem.add_development_dependency "bundler", ">= 1.0.0"
     gem.add_development_dependency "jeweler", ">= 1.4.0"
     gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
+    gem.add_development_dependency "xml-simple", ">= 1.0.12"
     gem.add_dependency "commander", ">= 4.0.3"
     gem.add_dependency "terminal-table", ">= 1.4.2"
     gem.add_dependency "net-ssh", ">= 2.0.23"

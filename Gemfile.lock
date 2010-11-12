@@ -20,6 +20,7 @@ GEM
       json_pure (>= 1.1.7)
     terminal-table (1.4.2)
     thoughtbot-shoulda (2.11.1)
+    xml-simple (1.0.12)
 
 PLATFORMS
   ruby
@@ -32,3 +33,4 @@ DEPENDENCIES
   net-ssh (~> 2.0.23)
   terminal-table (~> 1.4.2)
   thoughtbot-shoulda
+  xml-simple (~> 1.0.12)

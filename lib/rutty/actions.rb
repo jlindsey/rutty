@@ -126,7 +126,6 @@ module Rutty
 
       require 'logger'
       require 'net/ssh'
-      require 'pp'
 
       @returns = {}
       connections = []

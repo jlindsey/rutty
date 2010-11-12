@@ -5,6 +5,11 @@ module Rutty
   # @author Josh Lindsey
   # @since 2.0.0
   module Consts
+    ## List of possible output formats
+    OUTPUT_FORMATS = %w(human-readable json xml)
+    ## Default output format
+    DEFAULT_OUTPUT_FORMAT = 'human-readable'
+    
     ## Name of the general (defaults) config file
     GENERAL_CONF_FILE = 'defaults.yaml'
     ## Name of the datastore file for user-defined nodes

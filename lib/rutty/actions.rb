@@ -86,7 +86,7 @@ module Rutty
       check_installed!
       
       if self.nodes.empty?
-        puts "No nodes defined"
+        say "<%= color('No nodes defined', :yellow) %>"
       else
         require 'terminal-table/import'
       

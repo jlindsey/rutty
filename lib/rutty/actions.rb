@@ -16,6 +16,8 @@ module Rutty
     # @param [String] dir The directory to install into. {Rutty::Runner#config_dir} ensures
     #   that this falls back to {Rutty::Consts::CONF_DIR} if not passed in by the user.
     def init dir
+      require 'yaml'
+      
       general_file = File.join(dir, Rutty::Consts::GENERAL_CONF_FILE)
       nodes_file = File.join(dir, Rutty::Consts::NODES_CONF_FILE)
       

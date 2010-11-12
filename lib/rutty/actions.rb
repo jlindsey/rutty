@@ -187,7 +187,7 @@ module Rutty
       
       buffer = ''
       @returns.each do |host, hash|
-        padded_host = String.new host
+        padded_host = host.dup
         padded_host << (" " * (min_width - host.length)) if host.length < min_width
         buffer << padded_host << "\t\t"
         

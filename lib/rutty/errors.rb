@@ -12,4 +12,11 @@ module Rutty
   # @author Josh Lindsey
   # @since 2.0.0
   class BadUsage < StandardError; end
+  
+  ##
+  # Raised by {Rutty::Runner} if a bad output format is passed.
+  #
+  # @author Josh Lindsey
+  # @since 2.1.4
+  class InvalidOutputFormat < StandardError; end
 end

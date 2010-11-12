@@ -109,13 +109,18 @@ module Rutty
     # @see (see #add_node)
     # @param (see #add_node)
     def dsh args, options
-      # TODO: Clean this up, it's pretty hard to read and follow
-
       check_installed!
       raise Rutty::BadUsage.new "Must supply a command to run. See `rutty help dsh' for usage" if args.empty?
       raise Rutty::BadUsage.new "One of -a or --tags must be passed" if options.a.nil? and options.tags.nil?
       raise Rutty::BadUsage.new "Use either -a or --tags, not both" if !options.a.nil? and !options.tags.nil?
       raise Rutty::BadUsage.new "Multi-word commands must be enclosed in quotes (ex. rutty -a \"ps -ef | grep httpd\")" if args.length > 1
+
+      if self.nodes.empty?
+        say "<%= color('No nodes defined', :yellow) %>"
+        exit
+      end
+      
+      HighLine.color_scheme = HighLine::SampleColorScheme.new
 
       com_str = args.pop
 
@@ -158,18 +163,21 @@ module Rutty
       }
 
       self.nodes.filter(options).each do |node|
-        @returns[node.host] = { :out => '' }
+        @returns[node.host] = { :exit => 0, :out => '' }
         begin
           connections << Net::SSH.start(node.host, node.user, :port => node.port, :paranoid => false, 
-          :user_known_hosts_file => '/dev/null', :keys => [node.keypath], 
+          :user_known_hosts_file => '/dev/null', :keys => [node.keypath], :timeout => 5,
           :logger => Logger.new(options.debug.nil? ? $stderr : $stdout),
           :verbose => (options.debug.nil? ? Logger::FATAL : Logger::DEBUG))
         rescue Errno::ECONNREFUSED
-          $stderr.puts "ERROR: Connection refused on #{node.host}"
-          @returns.delete node.host
+          @returns[node.host][:out] = "<%= color('ERROR: Connection refused', :red) %>"
+          @returns[node.host][:exit] = 10000
         rescue SocketError
-          $stderr.puts "ERROR: no nodename nor servname provided, or not known for #{node[:host]}"
-          @returns.delete node.host
+          @returns[node.host][:out] = "<%= color('ERROR: no nodename nor servname provided, or not known', :red) %>"
+          @returns[node.host][:exit] = 20000
+        rescue Timeout::Error
+          @returns[node.host][:out] = "<%= color('ERROR: Connection timeout', :red) %>"
+          @returns[node.host][:exit] = 30000
         end
       end
 
@@ -180,8 +188,6 @@ module Rutty
         break if connections.empty?
       end
 
-      # TODO: Print a special alert for exit codes > 0
-
       min_width = 0
       @returns.each do |host, hash|
         min_width = host.length if host.length > min_width
@@ -190,13 +196,22 @@ module Rutty
       buffer = ''
       @returns.each do |host, hash|
         padded_host = host.dup
+      
+        if hash[:exit] >= 10000
+          padded_host = "<%= color('#{padded_host}', :critical) %>"
+        elsif hash[:exit] > 0
+          padded_host = "<%= color('#{padded_host}, :error) %>"
+        else
+          padded_host = "<%= color('#{padded_host}', :green) %>"
+        end
+        
         padded_host << (" " * (min_width - host.length)) if host.length < min_width
         buffer << padded_host << "\t\t"
         
-        buffer << hash[:out]
+        buffer << hash[:out].lstrip
       end
       
-      puts buffer
+      say buffer
     end
 
     ##

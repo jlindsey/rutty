@@ -197,13 +197,13 @@ module Rutty
           :logger => Logger.new(options.debug.nil? ? $stderr : $stdout),
           :verbose => (options.debug.nil? ? Logger::FATAL : Logger::DEBUG))
         rescue Errno::ECONNREFUSED
-          @returns[node.host][:out] = "<%= color('ERROR: Connection refused', :red) %>"
+          @returns[node.host][:out] = "ERROR: Connection refused"
           @returns[node.host][:exit] = 10000
         rescue SocketError
-          @returns[node.host][:out] = "<%= color('ERROR: no nodename nor servname provided, or not known', :red) %>"
+          @returns[node.host][:out] = "ERROR: no nodename nor servname provided, or not known"
           @returns[node.host][:exit] = 20000
         rescue Timeout::Error
-          @returns[node.host][:out] = "<%= color('ERROR: Connection timeout', :red) %>"
+          @returns[node.host][:out] = "ERROR: Connection timeout"
           @returns[node.host][:exit] = 30000
         end
       end
@@ -214,31 +214,57 @@ module Rutty
         connections.delete_if { |ssh| !ssh.process(0.1) { |s| s.busy? } }
         break if connections.empty?
       end
-
-      min_width = 0
-      @returns.each do |host, hash|
-        min_width = host.length if host.length > min_width
+      
+      output = case self.output_format
+        when 'human-readable'
+          min_width = 0
+          @returns.each do |host, hash|
+            min_width = host.length if host.length > min_width
+          end
+      
+          buffer = ''
+          @returns.each do |host, hash|
+            padded_host = host.dup
+      
+            if hash[:exit] >= 10000
+              padded_host = "<%= color('#{padded_host}', :critical) %>"
+              hash[:out] = "<%= color('#{hash[:out]}', :red) %>"
+            elsif hash[:exit] > 0
+              padded_host = "<%= color('#{padded_host}, :error) %>"
+            else
+              padded_host = "<%= color('#{padded_host}', :green) %>"
+            end
+        
+            padded_host << (" " * (min_width - host.length)) if host.length < min_width
+            buffer << padded_host << "\t\t"
+        
+            buffer << hash[:out].lstrip
+          end
+          
+          buffer
+          
+        when 'json'
+          require 'json'
+          JSON.dump @returns
+          
+        when 'xml'
+          require 'builder'
+          
+          xml = Builder::XmlMarkup.new(:indent => 2)
+          
+          xml.instruct!
+          xml.nodes do
+            @returns.each do |host, hash|
+              xml.node do
+                xml.host host
+                xml.exit hash[:exit]
+                xml.out hash[:out].strip
+              end
+            end
+          end
       end
       
-      buffer = ''
-      @returns.each do |host, hash|
-        padded_host = host.dup
-      
-        if hash[:exit] >= 10000
-          padded_host = "<%= color('#{padded_host}', :critical) %>"
-        elsif hash[:exit] > 0
-          padded_host = "<%= color('#{padded_host}, :error) %>"
-        else
-          padded_host = "<%= color('#{padded_host}', :green) %>"
-        end
-        
-        padded_host << (" " * (min_width - host.length)) if host.length < min_width
-        buffer << padded_host << "\t\t"
-        
-        buffer << hash[:out].lstrip
-      end
-      
-      say buffer
+      say output
     end
 
     ##

@@ -230,7 +230,7 @@ module Rutty
               padded_host = "<%= color('#{padded_host}', :critical) %>"
               hash[:out] = "<%= color('#{hash[:out]}', :red) %>"
             elsif hash[:exit] > 0
-              padded_host = "<%= color('#{padded_host}, :error) %>"
+              padded_host = "<%= color('#{padded_host}', :error) %>"
             else
               padded_host = "<%= color('#{padded_host}', :green) %>"
             end

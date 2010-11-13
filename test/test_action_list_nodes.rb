@@ -26,7 +26,7 @@ class TestActionListNodes < Test::Unit::TestCase
       assert_match separator, output.shift
       
       3.times do
-        assert_match /^\|\slocalhost\s+\|\s#{ENV['HOME']}\/\.ssh\/id_rsa\.pem\s+\|\sroot\s+\|\s22\s+\|\slocalhost,\stest\s+\|$/o, output.shift
+        assert_match /^\|\slocalhost\s+\|\s#{ENV['HOME']}\/\.ssh\/id_rsa\s+\|\s#{ENV['USER']}\s+\|\s22\s+\|\slocalhost,\stest\s+\|$/o, output.shift
       end
       
       assert_match separator, output.shift

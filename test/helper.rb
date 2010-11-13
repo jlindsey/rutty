@@ -24,7 +24,13 @@ class Test::Unit::TestCase
   end
   
   def seed_nodes
-    %x(#{RUTTY_BIN} add_node localhost -c #{TEST_CONF_DIR} -k ~/.ssh/id_rsa.pem -u root --tags localhost,test -p 22)
+    out = %x(#{RUTTY_BIN} add_node localhost -c #{TEST_CONF_DIR} -k ~/.ssh/id_rsa -u #{ENV['USER']} --tags localhost,test -p 22)
+    assert_match /Added localhost/, out
+  end
+  
+  def seed_bad_node
+    out = %x(#{RUTTY_BIN} add_node example.com -c #{TEST_CONF_DIR} --tags example,test,broken)
+    assert_match /Added example\.com/, out
   end
   
   def ensure_fresh_config!

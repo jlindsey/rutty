@@ -22,16 +22,16 @@ module Rutty
       nodes_file = File.join(dir, Rutty::Consts::NODES_CONF_FILE)
       
       if File.exists? dir
-        log "exists", dir
+        log "\t<%= color('exists', :cyan) %>", dir
       else
-        log "create", dir
+        log "\t<%= color('create', :green) %>", dir
         Dir.mkdir dir
       end
 
       if File.exists? general_file
-        log "exists", general_file
+        log "\t<%= color('exists', :cyan) %>", general_file
       else
-        log "create", general_file
+        log "\t<%= color('create', :green) %>", general_file
 
         defaults_hash = { 
           :user => 'root', 
@@ -45,9 +45,9 @@ module Rutty
       end
 
       if File.exists? nodes_file
-        log "exists", nodes_file
+        log "\t<%= color('exists', :cyan) %>", nodes_file
       else
-        log "create", nodes_file
+        log "\t<%= color('create', :green) %>", nodes_file
 
         File.open(nodes_file, 'w') do |f|
           YAML.dump([], f)
@@ -74,7 +74,7 @@ module Rutty
       self.nodes << Rutty::Node.new(hash, self.config.to_hash)
       self.nodes.write_config self.config_dir
       
-      puts "Added #{hash[:host]}"
+      say "<%= color('Added #{hash[:host]}', :green) %>"
     end
 
     ##
@@ -86,19 +86,47 @@ module Rutty
       check_installed!
       
       if self.nodes.empty?
-        puts "No nodes defined"
+        say "<%= color('No nodes defined', :yellow) %>"
       else
-        require 'terminal-table/import'
+        output = case self.output_format
+          when 'human-readable'
+            require 'terminal-table/import'
       
-        nodes_table = table do |t|
-          t.headings = 'Host', 'Key', 'User', 'Port', 'Tags'
-          self.nodes.each do |node|
-            tags = node.tags.nil? ? [] : node.tags
-            t << [node.host, node.keypath, node.user, node.port, tags.join(', ')]
-          end
+            table do |t|
+              t.headings = 'Host', 'Key', 'User', 'Port', 'Tags'
+              self.nodes.each do |node|
+                tags = node.tags.nil? ? [] : node.tags
+                t << [node.host, node.keypath, node.user, node.port, tags.join(', ')]
+              end
+            end
+          
+          when 'json'
+           require 'json'
+           JSON.dump self.nodes.collect { |node| node.to_hash }
+           
+          when 'xml'
+            require 'builder'
+            xml = Builder::XmlMarkup.new(:indent => 2)
+           
+             xml.instruct!
+             xml.nodes do
+               self.nodes.each do |node|
+                 xml.node do
+                   xml.host node.host
+                   xml.user node.user
+                   xml.port node.port
+                   xml.keypath node.keypath
+                   xml.tags do
+                     node.tags.each do |tag|
+                       xml.tag tag
+                     end
+                   end
+                 end
+               end
+             end
         end
         
-        puts nodes_table
+        puts output
       end
     end
 
@@ -109,19 +137,23 @@ module Rutty
     # @see (see #add_node)
     # @param (see #add_node)
     def dsh args, options
-      # TODO: Clean this up, it's pretty hard to read and follow
-
       check_installed!
       raise Rutty::BadUsage.new "Must supply a command to run. See `rutty help dsh' for usage" if args.empty?
       raise Rutty::BadUsage.new "One of -a or --tags must be passed" if options.a.nil? and options.tags.nil?
       raise Rutty::BadUsage.new "Use either -a or --tags, not both" if !options.a.nil? and !options.tags.nil?
       raise Rutty::BadUsage.new "Multi-word commands must be enclosed in quotes (ex. rutty -a \"ps -ef | grep httpd\")" if args.length > 1
 
+      if self.nodes.empty?
+        say "<%= color('No nodes defined', :yellow) %>"
+        exit
+      end
+      
+      HighLine.color_scheme = HighLine::SampleColorScheme.new
+
       com_str = args.pop
 
       require 'logger'
       require 'net/ssh'
-      require 'pp'
 
       @returns = {}
       connections = []
@@ -158,18 +190,21 @@ module Rutty
       }
 
       self.nodes.filter(options).each do |node|
-        @returns[node.host] = { :out => '' }
+        @returns[node.host] = { :exit => 0, :out => '' }
         begin
           connections << Net::SSH.start(node.host, node.user, :port => node.port, :paranoid => false, 
-          :user_known_hosts_file => '/dev/null', :keys => [node.keypath], 
+          :user_known_hosts_file => '/dev/null', :keys => [node.keypath], :timeout => 5,
           :logger => Logger.new(options.debug.nil? ? $stderr : $stdout),
           :verbose => (options.debug.nil? ? Logger::FATAL : Logger::DEBUG))
         rescue Errno::ECONNREFUSED
-          $stderr.puts "ERROR: Connection refused on #{node.host}"
-          @returns.delete node.host
+          @returns[node.host][:out] = "ERROR: Connection refused"
+          @returns[node.host][:exit] = 10000
         rescue SocketError
-          $stderr.puts "ERROR: no nodename nor servname provided, or not known for #{node[:host]}"
-          @returns.delete node.host
+          @returns[node.host][:out] = "ERROR: no nodename nor servname provided, or not known"
+          @returns[node.host][:exit] = 20000
+        rescue Timeout::Error
+          @returns[node.host][:out] = "ERROR: Connection timeout"
+          @returns[node.host][:exit] = 30000
         end
       end
 
@@ -179,24 +214,57 @@ module Rutty
         connections.delete_if { |ssh| !ssh.process(0.1) { |s| s.busy? } }
         break if connections.empty?
       end
-
-      # TODO: Print a special alert for exit codes > 0
-
-      min_width = 0
-      @returns.each do |host, hash|
-        min_width = host.length if host.length > min_width
-      end
       
-      buffer = ''
-      @returns.each do |host, hash|
-        padded_host = host.dup
-        padded_host << (" " * (min_width - host.length)) if host.length < min_width
-        buffer << padded_host << "\t\t"
+      output = case self.output_format
+        when 'human-readable'
+          min_width = 0
+          @returns.each do |host, hash|
+            min_width = host.length if host.length > min_width
+          end
+      
+          buffer = ''
+          @returns.each do |host, hash|
+            padded_host = host.dup
+      
+            if hash[:exit] >= 10000
+              padded_host = "<%= color('#{padded_host}', :critical) %>"
+              hash[:out] = "<%= color('#{hash[:out]}', :red) %>"
+            elsif hash[:exit] > 0
+              padded_host = "<%= color('#{padded_host}, :error) %>"
+            else
+              padded_host = "<%= color('#{padded_host}', :green) %>"
+            end
         
-        buffer << hash[:out]
+            padded_host << (" " * (min_width - host.length)) if host.length < min_width
+            buffer << padded_host << "\t\t"
+        
+            buffer << hash[:out].lstrip
+          end
+          
+          buffer
+          
+        when 'json'
+          require 'json'
+          JSON.dump @returns
+          
+        when 'xml'
+          require 'builder'
+          
+          xml = Builder::XmlMarkup.new(:indent => 2)
+          
+          xml.instruct!
+          xml.nodes do
+            @returns.each do |host, hash|
+              xml.node do
+                xml.host host
+                xml.exit hash[:exit]
+                xml.out hash[:out].strip
+              end
+            end
+          end
       end
       
-      puts buffer
+      say output
     end
 
     ##

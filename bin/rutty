@@ -9,10 +9,16 @@ $r = Rutty::Runner.new
 
 # Helpers
 add_filter_options = lambda { |c| 
-  c.option('--keypath PATH', String, 'Path to a private key')
-  c.option('--user NAME', String, 'User login')
-  c.option('--port NUMBER', Integer, 'SSH port number')
-  c.option('--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of tags')
+  c.option('-k', '--keypath PATH', String, 'Path to a private key')
+  c.option('-u', '--user NAME', String, 'User login')
+  c.option('-p', '--port NUMBER', Integer, 'SSH port number')
+  c.option('-t', '--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of tags')
+}
+
+add_remote_options = lambda { |c|
+  c.option('-t', '--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of tags to run the command on')
+  c.option('-a', 'Run the command on ALL nodes')
+  c.option('-d', '--debug', 'Enable debug output')
 }
 
 # Commander config
@@ -23,8 +29,12 @@ program :help_formatter, Commander::HelpFormatter::TerminalCompact
 
 default_command :dsh
 
-global_option '-c', '--config DIR', 'Directory to load configs from, defaults to ~/.rutty' do |dir|
+global_option '-c', '--config DIR', "Directory to load configs from, defaults to #{Rutty::Consts::CONF_DIR}" do |dir|
   $r.config_dir = dir
+end
+
+global_option '-o', '--output FORMAT', "Format to output into, defaults to #{Rutty::Consts::DEFAULT_OUTPUT_FORMAT}" do |format|
+  $r.output_format = format
 end
 
 # Commander commands
@@ -79,9 +89,7 @@ command :dsh do |c|
   c.example "Get a list of all users logged in to all your web and app nodes", "rutty --tags web,app w"
   c.example "See all your nodes' current memory footprint", "rutty -a \"free -m\""
   
-  c.option('--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of tags to run the command on')
-  c.option('-a', 'Run the command on ALL nodes')
-  c.option('-d', '--debug', 'Enable debug output')
+  add_remote_options.call(c)
   
   c.when_called do |args, options|
     $r.dsh args, options
@@ -93,9 +101,7 @@ command :scp do |c|
   c.summary = "Uploads a file to the nodes according to [options]."
   c.description = "#{c.summary} Unlike the actual scp command, this action is one-way: upload only."
   
-  c.option('--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of tags to run the command on')
-  c.option('-a', 'Run the command on ALL nodes')
-  c.option('-d', '--debug', 'Enable debug output')
+  add_remote_options.call(c)
   
   c.when_called do |args, options|
     $r.dsh args, options

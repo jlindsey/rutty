@@ -20,9 +20,9 @@ class TestNodes < Test::Unit::TestCase
       
       node = @nodes.pop
       
-      assert_equal 'root', node.user
+      assert_equal ENV['USER'], node.user
       assert_equal 22, node.port
-      assert_equal "#{ENV['HOME']}/.ssh/id_rsa.pem", node.keypath
+      assert_equal "#{ENV['HOME']}/.ssh/id_rsa", node.keypath
       assert_equal %w(localhost test), node.tags
     end
   end

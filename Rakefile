@@ -23,6 +23,7 @@ begin
     gem.add_dependency "net-ssh", ">= 2.0.23"
     gem.add_dependency "net-scp", ">= 1.0.4"
     gem.add_dependency "builder", ">= 2.1.2"
+    gem.add_dependency "treetop", ">= 1.4.8"
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError

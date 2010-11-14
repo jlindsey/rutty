@@ -16,10 +16,13 @@ GEM
     net-scp (1.0.4)
       net-ssh (>= 1.99.1)
     net-ssh (2.0.23)
+    polyglot (0.3.1)
     rubyforge (2.0.4)
       json_pure (>= 1.1.7)
     terminal-table (1.4.2)
     thoughtbot-shoulda (2.11.1)
+    treetop (1.4.8)
+      polyglot (>= 0.3.1)
     xml-simple (1.0.12)
 
 PLATFORMS
@@ -33,4 +36,5 @@ DEPENDENCIES
   net-ssh (~> 2.0.23)
   terminal-table (~> 1.4.2)
   thoughtbot-shoulda
+  treetop (~> 1.4.8)
   xml-simple (~> 1.0.12)

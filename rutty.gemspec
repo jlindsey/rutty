@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Josh Lindsey"]
-  s.date = %q{2010-11-13}
+  s.date = %q{2010-11-14}
   s.default_executable = %q{rutty}
   s.description = %q{
       RuTTY is a DSH (distributed / dancer's shell) written in Ruby. It's used to run commands 
@@ -88,6 +88,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<net-ssh>, [">= 2.0.23"])
       s.add_runtime_dependency(%q<net-scp>, [">= 1.0.4"])
       s.add_runtime_dependency(%q<builder>, [">= 2.1.2"])
+      s.add_runtime_dependency(%q<treetop>, [">= 1.4.8"])
     else
       s.add_dependency(%q<bundler>, [">= 1.0.0"])
       s.add_dependency(%q<jeweler>, [">= 1.4.0"])
@@ -98,6 +99,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<net-ssh>, [">= 2.0.23"])
       s.add_dependency(%q<net-scp>, [">= 1.0.4"])
       s.add_dependency(%q<builder>, [">= 2.1.2"])
+      s.add_dependency(%q<treetop>, [">= 1.4.8"])
     end
   else
     s.add_dependency(%q<bundler>, [">= 1.0.0"])
@@ -109,6 +111,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<net-ssh>, [">= 2.0.23"])
     s.add_dependency(%q<net-scp>, [">= 1.0.4"])
     s.add_dependency(%q<builder>, [">= 2.1.2"])
+    s.add_dependency(%q<treetop>, [">= 1.4.8"])
   end
 end
 

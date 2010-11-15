@@ -1,0 +1,38 @@
+grammar TagQueryGrammar
+  rule query
+    tag space boolean space (query / group) / tag
+  end
+
+  rule tag
+    ["|'] [a-zA-Z_-]+ ["|'] <Tag>
+  end
+
+  rule group
+    group_start query group_end <QueryGroup>
+  end
+  
+  rule boolean
+    AND / OR
+  end
+  
+  rule space
+    [\s]+
+  end
+
+  rule group_start
+    '(' <GroupStart>
+  end
+
+  rule group_end
+    ')' <GroupEnd>
+  end
+
+  rule AND
+    'AND' <AndLiteral>
+  end
+
+  rule OR
+    'OR' <OrLiteral>
+  end
+end
+

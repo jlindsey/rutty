@@ -45,6 +45,7 @@ class TestNodes < Test::Unit::TestCase
                                :user => 'example',
                                :keypath => '/home/example/.ssh/id_rsa.pem',
                                :tags => %w(broken test example)
+      
       @nodes = Rutty::Nodes.new [@node1, @node2, @node3]
     end
     
@@ -52,6 +53,35 @@ class TestNodes < Test::Unit::TestCase
     
     should "correctly instantiate when passed an array" do
       assert_contains @nodes, @node1, @node2
+    end
+    
+    should "return the correct Proc type for each query string type" do
+      Rutty::Nodes.publicize_methods do
+        assert_instance_of Rutty::Procs::SingleTagQuery, @nodes.get_tag_query_filter('foo')
+        assert_instance_of Rutty::Procs::MultipleTagQuery, @nodes.get_tag_query_filter('foo,bar')
+        assert_instance_of Rutty::Procs::SqlLikeTagQuery, @nodes.get_tag_query_filter("'foo' AND 'bar' OR 'baz'")
+      end
+    end
+    
+    should "generate the correct Proc string to eval" do
+      Rutty::Nodes.publicize_methods do
+         # New sql-like tag query. Need the parser for this.
+          require 'treetop'
+          require 'rutty/treetop/syntax_nodes'
+          require 'rutty/treetop/tag_query'
+
+          parser = TagQueryGrammarParser.new
+
+          proc_str = @nodes.recursive_build_query_proc_string parser.parse("'foo' AND 'bar' OR 'baz'").elements
+          proc_str = proc_str.rstrip << ') }'
+          
+          assert_equal "Procs::SqlLikeTagQuery.new { |n| !(n.has_tag?('foo') && n.has_tag?('bar') || n.has_tag?('baz')) }", proc_str
+          
+          proc_str = @nodes.recursive_build_query_proc_string parser.parse("'test' OR ('example' AND 'foo')").elements
+          proc_str = proc_str.rstrip << ') }'
+          
+          assert_equal "Procs::SqlLikeTagQuery.new { |n| !(n.has_tag?('test') || (n.has_tag?('example') && n.has_tag?('foo'))) }", proc_str
+      end
     end
     
     should "filter out nodes matching provided criteria" do
@@ -68,6 +98,10 @@ class TestNodes < Test::Unit::TestCase
       filtered = @nodes.filter(OpenStruct.new :tags => 'fake')
       assert_equal 2, filtered.length
       assert_equal [@node1, @node2], filtered
+      
+      filtered = @nodes.filter(OpenStruct.new :tags => 'google')
+      assert_equal 1, filtered.length
+      assert_equal [@node2], filtered
     end
     
     should "correctly filter on a comma-separated list of tags and return the correct node(s)" do

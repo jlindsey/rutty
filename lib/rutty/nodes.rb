@@ -94,10 +94,10 @@ module Rutty
 
       filter = nil
 
-      if query_str =~ /^\w$/
+      if query_str =~ /^[A-Za-z_-]+$/
         # Single tag query, no need to fire up the parser
-        filter = Procs::SingleTagQuery.new { |n| n.has_tag? "#{$1}" }
-      elsif query_str =~ /^(?:\w,?)+$/
+        filter = Procs::SingleTagQuery.new { |n| !n.has_tag? query_str }
+      elsif query_str =~ /^(?:[A-Za-z_-]+,?)+$/
         # Old-style comma-separated tag query. Still no
         # need to fire up the parser, just additively compare.
         tags = query_str.split(',')

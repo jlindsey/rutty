@@ -74,6 +74,40 @@ on all defined nodes regardless of tags.
 Note that any command that has any whitespace in it must be enclosed in quotes.
 
 	$ rutty -a "free -m"
+	
+###Tags###
+
+The `rutty dsh` and `rutty scp` commands both allow the `--tags` flag. The usage of this flag on these two commands
+is different than on `add_node`, where it is simply a list of tags to apply to the new node. On the remote commands,
+it essentially has three "modes": single tag, multiple comma-separated tags, and pseudo-SQL tag query.
+
+The single tag mode is simple. The command
+
+	$ rutty dsh --tags foobar uptime
+
+will run the `uptime` command on every node that is tagged with "foobar".
+
+---
+
+The multiple tags mode is essentially an OR query. It will run the command on any nodes that have **ANY** of the
+specified tags. For example:
+
+	$ rutty dsh --tags foo,baz,bar uptime
+
+will run the `uptime` command on any nodes that are tagged with "foo" **OR** "baz" **OR** "bar".
+
+---
+
+The pseudo-SQL tag query mode provides the most control over your tags. This allows you to pass in a string that looks
+a bit like SQL, letting you specify complex rules for your tag lookup. For example:
+
+	$ rutty dsh --tags "'foo' AND 'bar'" uptime
+
+will run `uptime` on any node that has **BOTH** "foo" and "bar" tags. The command
+
+	$ rutty dsh --tags "'foo' OR ('baz' AND 'bar')" uptime
+	
+will run `uptime` on any node that has a "foo" tag **OR** any node that has **BOTH** "baz" and "bar" tags.
 
 TODO
 ----

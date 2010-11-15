@@ -65,7 +65,6 @@ class TestNodes < Test::Unit::TestCase
     
     should "generate the correct Proc string to eval" do
       Rutty::Nodes.publicize_methods do
-         # New sql-like tag query. Need the parser for this.
           require 'treetop'
           require 'rutty/treetop/syntax_nodes'
           require 'rutty/treetop/tag_query'
@@ -81,6 +80,16 @@ class TestNodes < Test::Unit::TestCase
           proc_str = proc_str.rstrip << ') }'
           
           assert_equal "Procs::SqlLikeTagQuery.new { |n| !(n.has_tag?('test') || (n.has_tag?('example') && n.has_tag?('foo'))) }", proc_str
+      end
+    end
+    
+    should "raise an exception on malformed tag query strings" do
+      Rutty::Nodes.publicize_methods do
+        ["'foo' ARND 'bar'", "'fail", "'failure' AND )'foo'"].each do |str|
+          assert_raises Rutty::InvalidTagQueryString do
+            @nodes.get_tag_query_filter str
+          end
+        end
       end
     end
     

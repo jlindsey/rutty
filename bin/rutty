@@ -69,13 +69,6 @@ command :list_nodes do |c|
   # TODO: Make tag searching AND or OR, not just OR
   c.syntax = "rutty list_nodes [options]"
   c.summary = "List nodes according to [options]."
-  c.description = "#{c.summary} Options are the same as add_node"
-  
-  c.example "List all nodes", "rutty list_nodes"
-  c.example "List all nodes that are tagged with 'web' OR 'db'", "rutty list_nodes --tags web,db"
-  c.example "List all nodes configued to SSH into port 2222", "rutty list_nodes --port 2222"
-  
-  add_filter_options.call(c)
   
   c.when_called do |args, options|
     $r.list_nodes args, options

@@ -79,7 +79,6 @@ TODO
 ----
 
 * Cleanup dsh action code
-* Expand the tag searching semantics to allow for AND and/or OR queries
 * Implement delete_node command
 
 Copyright

@@ -19,4 +19,12 @@ module Rutty
   # @author Josh Lindsey
   # @since 2.1.4
   class InvalidOutputFormat < StandardError; end
+  
+  ##
+  # Raised by {Rutty::Helpers#get_tag_query_filter} if the Treetop
+  # parser is unable to parse the tag query string.
+  #
+  # @author Josh Lindsey
+  # @since 2.3.0
+  class InvalidTagQueryString < StandardError; end
 end

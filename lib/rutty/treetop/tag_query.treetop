@@ -4,7 +4,7 @@ grammar TagQueryGrammar
   end
 
   rule tag
-    ["|'] [a-zA-Z_-]+ ["|'] <Tag>
+    ["|'] [\w-]+ ["|'] <Tag>
   end
 
   rule group
@@ -16,7 +16,7 @@ grammar TagQueryGrammar
   end
   
   rule space
-    [\s]+
+    [\s]+ <Whitespace>
   end
 
   rule group_start

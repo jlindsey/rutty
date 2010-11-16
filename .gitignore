@@ -19,6 +19,7 @@ rdoc
 pkg
 doc
 .yardoc
+.bundle
 
 ## PROJECT::SPECIFIC
 tmp

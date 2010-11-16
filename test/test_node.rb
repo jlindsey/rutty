@@ -1,6 +1,18 @@
 require 'helper'
 
 class TestNode < Test::Unit::TestCase
+  context "The Rutty::Node class" do
+    should "respond to its methods" do
+      assert_respond_to Rutty::Node, :load_config
+    end
+
+    should "raise an exception on #load_config calls" do
+      assert_raises RuntimeError do
+        Rutty::Node.load_config 'foo'
+      end
+    end
+  end
+
   context "A Rutty::Node instance" do
     setup do 
       hash = { :foo => "blah", :test => "hello" }
@@ -12,6 +24,7 @@ class TestNode < Test::Unit::TestCase
       node = Rutty::Node.new Hash.new, @defaults
       
       assert_respond_to node, :has_tag?
+      assert_respond_to node, :==
       assert_respond_to node, :<=>
     end
     

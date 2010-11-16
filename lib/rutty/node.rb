@@ -9,6 +9,18 @@ module Rutty
   # @author Josh Lindsey
   # @since 2.0.0
   class Node < Config
+    class << self
+      ##
+      # Override the inherited {Rutty::Config.load_config} method, raising an exception
+      # to indicate improper usage.
+      # 
+      # @since 2.3.3
+      # @raise [RuntimeError] On call, as this class has no use for this method
+      def load_config dir
+        raise "Unable to call load_config on Node objects."
+      end
+    end
+
     ##
     # Initialize a new {Rutty::Node} instance by merging the user-provided data with
     # the configured defaults.

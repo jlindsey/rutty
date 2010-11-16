@@ -28,6 +28,7 @@ Jeweler::Tasks.new do |gem|
   gem.add_development_dependency "xml-simple", ">= 1.0.12"
   gem.add_runtime_dependency "commander", ">= 4.0.3"
   gem.add_runtime_dependency "terminal-table", ">= 1.4.2"
+  gem.add_runtime_dependency "json", ">= 1.4.6"
   gem.add_runtime_dependency "net-ssh", ">= 2.0.23"
   gem.add_runtime_dependency "net-scp", ">= 1.0.4"
   gem.add_runtime_dependency "builder", ">= 2.1.2"

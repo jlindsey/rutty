@@ -2,6 +2,7 @@ source :gemcutter
 
 gem "commander", '~> 4.0.3'
 gem "terminal-table", '~> 1.4.2'
+gem "json", '~> 1.4.6'
 gem "net-ssh", '~> 2.0.23'
 gem "net-scp", '~> 1.0.4'
 gem "builder", '~> 2.1.2'

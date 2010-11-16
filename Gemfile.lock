@@ -10,6 +10,7 @@ GEM
       bundler (~> 1.0.0)
       git (>= 1.2.5)
       rake
+    json (1.4.6)
     net-scp (1.0.4)
       net-ssh (>= 1.99.1)
     net-ssh (2.0.23)
@@ -30,6 +31,7 @@ DEPENDENCIES
   bundler (~> 1.0.0)
   commander (~> 4.0.3)
   jeweler (~> 1.5.1)
+  json (~> 1.4.6)
   net-scp (~> 1.0.4)
   net-ssh (~> 2.0.23)
   rcov

@@ -16,6 +16,16 @@ Requirements
 
 * Bundler >= 1.0.0
 
+###A note on running tests###
+
+Since RuTTY is essentially a wrapper around SSH connections, a system that is capable of recieving SSH 
+connections must be available to fully test this tool. Currently, I have the tests setup to attempt to
+log into the current system via the loopback interface (localhost) as the user who ran the tests (as
+detected by `ENV['USER']`). It attempts to do this on port 22 using the public key found in
+`#{ENV['HOME']}/.ssh/id_rsa`.
+
+Note that unless all these conditions are met on your system, tests will not be fully successful.
+
 Installation
 ------------
 
@@ -130,3 +140,4 @@ Copyright
 ---------
 
 Copyright (c) 2010 Josh Lindsey at Cloudspace. See LICENSE for details.
+

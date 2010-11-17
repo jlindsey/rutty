@@ -8,7 +8,7 @@ class TestActionAddNode < Test::Unit::TestCase
     should "properly create a new node entry when called" do
       require 'yaml'
       
-      output = %x(#{RUTTY_BIN} add_node -c #{TEST_CONF_DIR} example.com -k /home/user/.ssh/id_rsa -u root -p 22333 --tags example,testing)
+      output = %x(#{RUTTY_BIN} add_node -c #{TEST_CONF_DIR} example.com -k /home/user/.ssh/id_rsa -u root -p 22333 -g example,testing)
       
       green = '\\e\[32m'
       clear = '\\e\[0m'

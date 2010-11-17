@@ -12,11 +12,11 @@ add_filter_options = lambda { |c|
   c.option('-k', '--keypath PATH', String, 'Path to a private key')
   c.option('-u', '--user NAME', String, 'User login')
   c.option('-p', '--port NUMBER', Integer, 'SSH port number')
-  c.option('-t', '--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of tags')
+  c.option('-g', '--tags TAG1[,TAG2,...]', Array, 'Comma-separated list of tags')
 }
 
 add_remote_options = lambda { |c|
-  c.option('-t', '--tags TAG1[,TAG2,...]', String, 'Comma-separated list of tags to run the command on')
+  c.option('-g', '--tags TAG1[,TAG2,...]', String, 'Comma-separated list of tags to run the command on')
   c.option('-a', 'Run the command on ALL nodes')
   c.option('-d', '--debug', 'Enable debug output')
 }

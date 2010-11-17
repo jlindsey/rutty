@@ -40,7 +40,7 @@ end
 # Commander commands
 command :init do |c|
   c.syntax = "rutty init [DIR]"
-  c.summary = "Creates the default file structure for rutty"
+  c.summary = "Creates the default file structure for rutty."
   c.description = "#{c.summary} in the specified DIR. If DIR is not given, defaults to ~/.rutty"
   c.when_called do |args, options|
     args.push Rutty::Consts::CONF_DIR if args.empty?
@@ -66,9 +66,9 @@ command :add_node do |c|
 end
 
 command :list_nodes do |c|
-  # TODO: Make tag searching AND or OR, not just OR
-  c.syntax = "rutty list_nodes [options]"
-  c.summary = "List nodes according to [options]."
+  c.syntax = "rutty list_nodes [-o FORMAT]"
+  c.summary = "List all currently defined nodes."
+  c.description = "#{c.summary} Defaults to human-readable ASCII table format. Optionally specify either json or xml."
   
   c.when_called do |args, options|
     $r.list_nodes args, options
@@ -77,7 +77,7 @@ end
 
 command :dsh do |c|
   c.syntax = "rutty [dsh] [options] COMMAND"
-  c.summary = "Runs the specified COMMAND across all nodes that match [options]"
+  c.summary = "Runs the specified COMMAND across all nodes that match [options]."
   
   c.example "Get a list of all users logged in to all your web and app nodes", "rutty --tags web,app w"
   c.example "See all your nodes' current memory footprint", "rutty -a \"free -m\""

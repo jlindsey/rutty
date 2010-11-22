@@ -10,10 +10,7 @@ class TestActionAddNode < Test::Unit::TestCase
       
       output = %x(#{RUTTY_BIN} add_node -c #{TEST_CONF_DIR} example.com -k /home/user/.ssh/id_rsa -u root -p 22333 -g example,testing)
       
-      green = '\\e\[32m'
-      clear = '\\e\[0m'
-      
-      assert_match /#{green}Added example\.com#{clear}/, output
+      assert_match /#{Colors::GREEN}Added example\.com#{Colors::CLEAR}/, output
       
       nodes = YAML.load(File.open(TEST_NODES_CONF).read)
       

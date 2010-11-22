@@ -7,6 +7,20 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rutty'
 
 class Test::Unit::TestCase
+  # Terminal escape sequences for colors
+  module Colors
+    CLEAR   = '\\e\[0m'
+    
+    RED     = '\\e\[31m'
+    YELLOW  = '\\e\[33m'
+    GREEN   = '\\e\[32m'
+    CYAN    = '\\e\[36m'
+
+    RED_BG  = '\\e\[41m'
+
+    BOLD    = '\\e\[1m'
+  end
+  
   TMP_DIR = File.join(File.dirname(__FILE__), '..', 'tmp')
   TEST_CONF_DIR = File.join(TMP_DIR, 'config')
   TEST_GENERAL_CONF = File.join(TEST_CONF_DIR, 'defaults.yaml')

@@ -21,10 +21,7 @@ class TestActionSCP < Test::Unit::TestCase
     end
     
     should "display the correct output" do
-      green = '\\e\[32m'
-      clear = '\\e\[0m'
-      
-      assert_match /^#{green}1 file uploaded in [\d\.]+ [seconds|minutes]#{clear}$/, @out
+      assert_match /^#{Colors::GREEN}1 file uploaded in [\d\.]+ [seconds|minutes]#{Colors::CLEAR}$/, @out
     end
   end
 end

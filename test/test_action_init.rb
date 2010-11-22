@@ -17,10 +17,8 @@ class TestActionInit < Test::Unit::TestCase
       ensure_fresh_config!
       
       out = %x(#{RUTTY_BIN} init #{TEST_CONF_DIR})
-      
-      cyan = '\\e\[36m'
-      clear = '\\e\[0m'
-      exists = "#{cyan}exists#{clear}"
+
+      exists = "#{Colors::CYAN}exists#{Colors::CLEAR}"
       
       assert_match /^\s+#{exists}\s+#{TEST_CONF_DIR}$/o, out
       assert_match /^\s+#{exists}\s+#{TEST_GENERAL_CONF}$/o, out
@@ -29,10 +27,8 @@ class TestActionInit < Test::Unit::TestCase
     
     should "report that it has created the file structure if it doesn't exist" do
       out = %x(#{RUTTY_BIN} init #{TEST_CONF_DIR})
-      
-      green = '\\e\[32m'
-      clear = '\\e\[0m'
-      create = "#{green}create#{clear}"
+
+      create = "#{Colors::GREEN}create#{Colors::CLEAR}"
       
       assert_match /^\s+#{create}\s+#{TEST_CONF_DIR}$/o, out
       assert_match /^\s+#{create}\s+#{TEST_GENERAL_CONF}$/o, out

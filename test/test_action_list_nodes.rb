@@ -8,10 +8,7 @@ class TestActionListNodes < Test::Unit::TestCase
     should "report no defined nodes when no nodes are defined" do
       output = %x(#{RUTTY_BIN} list_nodes -c #{TEST_CONF_DIR} 2>&1)
       
-      yellow = '\\e\[33m'
-      clear = '\\e\[0m'
-      
-      assert_match /#{yellow}No nodes defined#{clear}/, output
+      assert_match /#{Colors::YELLOW}No nodes defined#{Colors::CLEAR}/, output
     end
     
     should "properly list defined nodes in ASCII table format" do

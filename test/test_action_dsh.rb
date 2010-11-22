@@ -27,7 +27,7 @@ class TestActionDSH < Test::Unit::TestCase
       assert_match /^#{yellow}#{red_bg}example\.com#{clear}\s+#{red}ERROR: Connection timeout#{clear}$/, output.rstrip
     end
     
-    should "display a general error state when an exite code > 0 is returned" do
+    should "display a general error state when an exit code > 0 is returned" do
       seed_nodes
       
       output = %x(#{RUTTY_BIN} -c #{TEST_CONF_DIR} -a foobar)
@@ -36,7 +36,7 @@ class TestActionDSH < Test::Unit::TestCase
       red = '\\e\[31m'
       clear = '\\e\[0m'
       
-      assert_match /^#{bold}#{red}localhost#{clear}\s+.*command not found$/, output.rstrip
+      assert_match /^#{bold}#{red}localhost#{clear}\s+.*command not found.*$/, output.rstrip
     end
     
     should "display the proper output on success" do

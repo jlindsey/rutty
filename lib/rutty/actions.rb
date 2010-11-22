@@ -25,7 +25,7 @@ module Rutty
         log "\t<%= color('exists', :cyan) %>", dir
       else
         log "\t<%= color('create', :green) %>", dir
-        Dir.mkdir dir
+        FileUtils.mkdir_p dir
       end
 
       if File.exists? general_file

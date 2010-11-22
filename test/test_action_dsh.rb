@@ -32,18 +32,23 @@ class TestActionDSH < Test::Unit::TestCase
       
       output = %x(#{RUTTY_BIN} -c #{TEST_CONF_DIR} -a whoami)
       
-      green = '\\e\[32m'
-      clear = '\\e\[0m'
-      
       assert_match /^#{Colors::GREEN}localhost#{Colors::CLEAR}\s+#{ENV['USER']}$/, output.rstrip
     end
     
-    should "display statistics output" do
+    should "display successful statistics output" do
       seed_nodes
       
       output = %x(#{RUTTY_BIN} -c #{TEST_CONF_DIR} -a whoami)
       
+      assert_match /\n+#{Colors::GREEN}1\ total\ host\(s\),\ 0\ error\(s\),\ \d+(?:\.\d+)?\ seconds?#{Colors::CLEAR}/, output
+    end
+    
+    should "display error-state statistics output" do
+      seed_bad_node
       
+      output = %x(#{RUTTY_BIN} -c #{TEST_CONF_DIR} -a whoami)
+      
+      assert_match /\n+#{Colors::RED}1\ total\ host\(s\),\ 1 error\(s\),\ \d+(?:\.\d+)?\ seconds?#{Colors::CLEAR}/, output
     end
   end
 end

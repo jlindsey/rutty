@@ -137,6 +137,8 @@ module Rutty
     # @see (see #add_node)
     # @param (see #add_node)
     def dsh args, options
+      start_time = Time.now
+      
       check_installed!
       raise Rutty::BadUsage.new "Must supply a command to run. See `rutty help dsh' for usage" if args.empty?
       raise Rutty::BadUsage.new "One of -a or --tags must be passed" if options.a.nil? and options.tags.nil?
@@ -188,8 +190,10 @@ module Rutty
         end 
         ssh.loop
       }
-
-      self.nodes.filter(options).each do |node|
+      
+      filtered_nodes = self.nodes.filter(options)
+      
+      filtered_nodes.each do |node|
         @returns[node.host] = { :exit => 0, :out => '' }
         begin
           connections << Net::SSH.start(node.host, node.user, :port => node.port, :paranoid => false, 
@@ -240,6 +244,16 @@ module Rutty
         
             buffer << hash[:out].lstrip
           end
+          
+          end_time = Time.now
+
+          total_nodes = filtered_nodes.length
+          total_error_nodes = @returns.reject { |host, hash| hash[:exit] == 0 }.length
+          total_time = end_time - start_time
+
+          buffer.rstrip!
+          buffer << "\n\n" << "<%= color('#{total_nodes} total host(s), #{total_error_nodes} error(s), #{seconds_in_words total_time}', "
+          buffer << (total_error_nodes > 0 ? ":red" : ":green") << ") %>"
           
           buffer
           

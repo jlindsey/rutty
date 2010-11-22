@@ -2,6 +2,7 @@ GEM
   remote: http://rubygems.org/
   specs:
     builder (2.1.2)
+    columnize (0.3.1)
     commander (4.0.3)
       highline (>= 1.5.0)
     git (1.2.5)
@@ -11,12 +12,18 @@ GEM
       git (>= 1.2.5)
       rake
     json (1.4.6)
+    linecache (0.43)
     net-scp (1.0.4)
       net-ssh (>= 1.99.1)
     net-ssh (2.0.23)
     polyglot (0.3.1)
     rake (0.8.7)
     rcov (0.9.9)
+    ruby-debug (0.10.3)
+      columnize (>= 0.1)
+      ruby-debug-base (~> 0.10.3.0)
+    ruby-debug-base (0.10.3)
+      linecache (>= 0.3)
     shoulda (2.11.3)
     terminal-table (1.4.2)
     treetop (1.4.8)
@@ -35,6 +42,7 @@ DEPENDENCIES
   net-scp (~> 1.0.4)
   net-ssh (~> 2.0.23)
   rcov
+  ruby-debug
   shoulda
   terminal-table (~> 1.4.2)
   treetop (~> 1.4.8)

@@ -14,4 +14,5 @@ group :development do
   gem "shoulda", ">= 0"
   gem "rcov", ">= 0"
   gem "xml-simple", '~> 1.0.12'
+  gem "ruby-debug", ">= 0"
 end

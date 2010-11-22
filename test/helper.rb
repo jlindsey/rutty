@@ -7,7 +7,8 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rutty'
 
 class Test::Unit::TestCase
-  TEST_CONF_DIR = File.join(File.dirname(__FILE__), '..', 'tmp')
+  TMP_DIR = File.join(File.dirname(__FILE__), '..', 'tmp')
+  TEST_CONF_DIR = File.join(TMP_DIR, 'config')
   TEST_GENERAL_CONF = File.join(TEST_CONF_DIR, 'defaults.yaml')
   TEST_NODES_CONF = File.join(TEST_CONF_DIR, 'nodes.yaml')
   
@@ -20,7 +21,7 @@ class Test::Unit::TestCase
   end
   
   def clean_test_config!
-    %x(rm -rf #{TEST_CONF_DIR}) if File.exists? TEST_CONF_DIR
+    %x(rm -rf #{TEST_CONF_DIR}) if File.exists? TMP_DIR
   end
   
   def seed_nodes
@@ -45,6 +46,7 @@ class Test::Unit::TestCase
   end
 end
 
+# Used to make private methods in a class public temporarily.
 class Class
   def publicize_methods
     saved_private_instance_methods = self.private_instance_methods

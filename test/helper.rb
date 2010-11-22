@@ -21,7 +21,7 @@ class Test::Unit::TestCase
   end
   
   def clean_test_config!
-    %x(rm -rf #{TEST_CONF_DIR}) if File.exists? TMP_DIR
+    %x(rm -rf #{TMP_DIR}) if File.exists? TMP_DIR
   end
   
   def seed_nodes

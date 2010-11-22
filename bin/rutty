@@ -97,7 +97,7 @@ command :scp do |c|
   add_remote_options.call(c)
   
   c.when_called do |args, options|
-    $r.dsh args, options
+    $r.scp args, options
   end
 end
 

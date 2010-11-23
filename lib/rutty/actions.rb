@@ -137,7 +137,7 @@ module Rutty
     # @see (see #add_node)
     # @param (see #add_node)
     def dsh args, options
-      start_time = Time.now
+      @start_time = Time.now
       
       check_installed!
       raise Rutty::BadUsage.new "Must supply a command to run. See `rutty help dsh' for usage" if args.empty?
@@ -149,24 +149,18 @@ module Rutty
         say "<%= color('No nodes defined', :yellow) %>"
         exit
       end
-      
-      HighLine.color_scheme = HighLine::SampleColorScheme.new
 
       com_str = args.pop
 
-      require 'logger'
-      require 'net/ssh'
-
       @returns = {}
-      connections = []
-
+      
       # This is necessary in order to capture exit codes and/or signals, 
       # which are't passed through when using just the ssh.exec!() semantics.
       exec_command = lambda { |ssh| 
         ssh.open_channel do |channel| 
           channel.exec(com_str) do |ch, success| 
             unless success 
-              abort "FAILED: couldn't execute command (ssh.channel.exec failure)" 
+              @returns[ssh.host][:out] = "FAILED: couldn't execute command (ssh.channel.exec failure)"
             end 
 
             channel.on_data do |ch, data|  # stdout 
@@ -179,8 +173,7 @@ module Rutty
             end 
 
             channel.on_request("exit-status") do |ch, data| 
-              exit_code = data.read_long 
-              @returns[ssh.host][:exit] = exit_code
+              @returns[ssh.host][:exit] = data.read_long
             end 
 
             channel.on_request("exit-signal") do |ch, data| 
@@ -191,26 +184,8 @@ module Rutty
         ssh.loop
       }
       
-      filtered_nodes = self.nodes.filter(options)
-      
-      filtered_nodes.each do |node|
-        @returns[node.host] = { :exit => 0, :out => '' }
-        begin
-          connections << Net::SSH.start(node.host, node.user, :port => node.port, :paranoid => false, 
-          :user_known_hosts_file => '/dev/null', :keys => [node.keypath], :timeout => 5,
-          :logger => Logger.new(options.debug.nil? ? $stderr : $stdout),
-          :verbose => (options.debug.nil? ? Logger::FATAL : Logger::DEBUG))
-        rescue Errno::ECONNREFUSED
-          @returns[node.host][:out] = "ERROR: Connection refused"
-          @returns[node.host][:exit] = 10000
-        rescue SocketError
-          @returns[node.host][:out] = "ERROR: no nodename nor servname provided, or not known"
-          @returns[node.host][:exit] = 20000
-        rescue Timeout::Error
-          @returns[node.host][:out] = "ERROR: Connection timeout"
-          @returns[node.host][:exit] = 30000
-        end
-      end
+      @filtered_nodes = self.nodes.filter(options)
+      connections = connect_to_nodes @filtered_nodes, options.debug.nil?
 
       connections.each { |ssh| exec_command.call(ssh) }
 
@@ -219,66 +194,7 @@ module Rutty
         break if connections.empty?
       end
       
-      output = case self.output_format
-        when 'human-readable'
-          min_width = 0
-          @returns.each do |host, hash|
-            min_width = host.length if host.length > min_width
-          end
-      
-          buffer = ''
-          @returns.each do |host, hash|
-            padded_host = host.dup
-      
-            if hash[:exit] >= 10000
-              padded_host = "<%= color('#{padded_host}', :critical) %>"
-              hash[:out] = "<%= color('#{hash[:out]}', :red) %>"
-            elsif hash[:exit] > 0
-              padded_host = "<%= color('#{padded_host}', :error) %>"
-            else
-              padded_host = "<%= color('#{padded_host}', :green) %>"
-            end
-        
-            padded_host << (" " * (min_width - host.length)) if host.length < min_width
-            buffer << padded_host << "\t\t"
-        
-            buffer << hash[:out].lstrip
-          end
-          
-          end_time = Time.now
-
-          total_nodes = filtered_nodes.length
-          total_error_nodes = @returns.reject { |host, hash| hash[:exit] == 0 }.length
-          total_time = end_time - start_time
-
-          buffer.rstrip!
-          buffer << "\n\n" << "<%= color('#{total_nodes} total host(s), #{total_error_nodes} error(s), #{seconds_in_words total_time}', "
-          buffer << (total_error_nodes > 0 ? ":red" : ":green") << ") %>"
-          
-          buffer
-          
-        when 'json'
-          require 'json'
-          JSON.dump @returns
-          
-        when 'xml'
-          require 'builder'
-          
-          xml = Builder::XmlMarkup.new(:indent => 2)
-          
-          xml.instruct!
-          xml.nodes do
-            @returns.each do |host, hash|
-              xml.node do
-                xml.host host
-                xml.exit hash[:exit]
-                xml.out hash[:out].strip
-              end
-            end
-          end
-      end
-      
-      say output
+      say generate_output
     end
 
     ##
@@ -288,39 +204,148 @@ module Rutty
     # @see (see #add_node)
     # @param (see #add_node)
     def scp args, options
+      @start_time = Time.now
+      
       check_installed!
       raise Rutty::BadUsage.new "Must supply a local path and a remote path" unless args.length == 2
       raise Rutty::BadUsage.new "One of -a or --tags must be passed" if options.a.nil? and options.tags.nil?
       raise Rutty::BadUsage.new "Use either -a or --tags, not both" if !options.a.nil? and !options.tags.nil?
 
-      require 'logger'
-      require 'net/ssh'
-      require 'net/scp'
-      require 'pp'
-
-      connections = []
+      if self.nodes.empty?
+        say "<%= color('No nodes defined', :yellow) %>"
+        exit
+      end
 
       remote_path = args.pop
       local_path = args.pop
 
-      self.nodes.filter(options).each do |node|
-        begin
-          connections << Net::SSH.start(node.host, node.user, :port => node.port, :paranoid => false, 
-          :user_known_hosts_file => '/dev/null', :keys => [node.keypath], 
-          :logger => Logger.new(options.debug.nil? ? $stderr : $stdout),
-          :verbose => (options.debug.nil? ? Logger::FATAL : Logger::DEBUG))
-        rescue Errno::ECONNREFUSED
-          $stderr.puts "ERROR: Connection refused on #{node.host}"
-        rescue SocketError
-          $stderr.puts "ERROR: nodename nor servname provided, or not known for #{node.host}"
-        end
-      end
+      @returns = {}
+      @filtered_nodes = self.nodes.filter(options)
+      connections = connect_to_nodes @filtered_nodes, options.debug.nil?
 
       connections.each { |ssh| ssh.scp.upload! local_path, remote_path }
 
       loop do
         connections.delete_if { |ssh| !ssh.process(0.1) { |s| s.busy? } }
         break if connections.empty?
+      end
+      
+      say generate_output
+    end
+    
+    private
+    
+    ##
+    # Sets up the Net::SSH connections given a filled {Nodes} object.
+    #
+    # @since 2.4.0
+    #
+    # @see #dsh
+    # @see #scp
+    #
+    # @param [Nodes] nodes The {Node} objects to connect to
+    # @return [Array<Net:SSH::Connection>] The array of live connections
+    def connect_to_nodes nodes, debug = false
+      require 'logger'
+      require 'net/ssh'
+      require 'net/scp'
+      
+      connections = []
+      
+      nodes.each do |node|
+        @returns[node.host] = { :exit => 0, :out => '' }
+        begin
+          connections << Net::SSH.start(node.host, node.user, :port => node.port, :paranoid => false, 
+          :user_known_hosts_file => '/dev/null', :keys => [node.keypath], :timeout => 5,
+          :logger => Logger.new(debug ? $stderr : $stdout),
+          :verbose => (debug ? Logger::FATAL : Logger::DEBUG))
+        rescue Errno::ECONNREFUSED
+          @returns[node.host][:out] = "ERROR: Connection refused"
+          @returns[node.host][:exit] = 10000
+        rescue SocketError
+          @returns[node.host][:out] = "ERROR: no nodename nor servname provided, or not known"
+          @returns[node.host][:exit] = 20000
+        rescue Timeout::Error
+          @returns[node.host][:out] = "ERROR: Connection timeout"
+          @returns[node.host][:exit] = 30000
+        rescue Net::SSH::AuthenticationFailed => e
+          @returns[node.host][:out] = "ERROR: Authentication failure (#{e.to_s})"
+          @returns[node.host][:exit] = 40000
+        end
+      end
+      
+      connections
+    end
+    
+    ##
+    # Generates the output of the remote actions, based on the value of {Rutty::Runner#output_format}.
+    #
+    # @since 2.4.0
+    #
+    # @see #dsh
+    # @see #scp
+    #
+    # @return [String] The formatted string to output
+    def generate_output
+      case self.output_format
+      when 'human-readable'
+        HighLine.color_scheme = HighLine::SampleColorScheme.new
+        
+        min_width = 0
+        @returns.each do |host, hash|
+          min_width = host.length if host.length > min_width
+        end
+
+        buffer = ''
+        @returns.each do |host, hash|
+          padded_host = host.dup
+
+          if hash[:exit] >= 10000
+            padded_host = "<%= color('#{padded_host}', :critical) %>"
+            hash[:out] = "<%= color('#{hash[:out]}', :red) %>"
+          elsif hash[:exit] > 0
+            padded_host = "<%= color('#{padded_host}', :error) %>"
+          else
+            padded_host = "<%= color('#{padded_host}', :green) %>"
+          end
+
+          padded_host << (" " * (min_width - host.length)) if host.length < min_width
+          buffer << padded_host << "\t\t"
+
+          buffer << hash[:out].lstrip
+        end
+
+        @end_time = Time.now
+
+        total_nodes = @filtered_nodes.length
+        total_error_nodes = @returns.reject { |host, hash| hash[:exit] == 0 }.length
+        total_time = @end_time - @start_time
+
+        buffer.rstrip!
+        buffer << "\n\n" << "<%= color('#{total_nodes} host(s), #{total_error_nodes} error(s), #{seconds_in_words total_time}', "
+        buffer << (total_error_nodes > 0 ? ":red" : ":green") << ") %>"
+
+        buffer
+
+      when 'json'
+        require 'json'
+        JSON.dump @returns
+
+      when 'xml'
+        require 'builder'
+
+        xml = Builder::XmlMarkup.new(:indent => 2)
+
+        xml.instruct!
+        xml.nodes do
+          @returns.each do |host, hash|
+            xml.node do
+              xml.host host
+              xml.exit hash[:exit]
+              xml.out hash[:out].strip
+            end
+          end
+        end
       end
     end
   end

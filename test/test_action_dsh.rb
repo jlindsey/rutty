@@ -40,7 +40,7 @@ class TestActionDSH < Test::Unit::TestCase
       
       output = %x(#{RUTTY_BIN} -c #{TEST_CONF_DIR} -a whoami)
       
-      assert_match /\n+#{Colors::GREEN}1\ total\ host\(s\),\ 0\ error\(s\),\ \d+(?:\.\d+)?\ seconds?#{Colors::CLEAR}/, output
+      assert_match /\n+#{Colors::GREEN}1 host\(s\), 0 error\(s\), \d+(?:\.\d+)? seconds?#{Colors::CLEAR}/, output
     end
     
     should "display error-state statistics output" do
@@ -48,7 +48,7 @@ class TestActionDSH < Test::Unit::TestCase
       
       output = %x(#{RUTTY_BIN} -c #{TEST_CONF_DIR} -a whoami)
       
-      assert_match /\n+#{Colors::RED}1\ total\ host\(s\),\ 1 error\(s\),\ \d+(?:\.\d+)?\ seconds?#{Colors::CLEAR}/, output
+      assert_match /\n+#{Colors::RED}1 host\(s\), 1 error\(s\), \d+(?:\.\d+)? seconds?#{Colors::CLEAR}/, output
     end
   end
 end

@@ -246,35 +246,70 @@ module Rutty
     # @param [Nodes] nodes The {Node} objects to connect to
     # @return [Array<Net:SSH::Connection>] The array of live connections
     def connect_to_nodes nodes, debug = false
+      require 'thread'
       require 'logger'
       require 'net/ssh'
       require 'net/scp'
       
+      require 'ruby-debug'
+      
+      Thread.abort_on_exception = true
+      
       connections = []
+      cons_lock = Mutex.new
+      returns_lock = Mutex.new
+      threads = []
       
       nodes.each do |node|
-        @returns[node.host] = { :exit => 0, :out => '' }
-        begin
-          connections << Net::SSH.start(node.host, node.user, :port => node.port, :paranoid => false, 
-          :user_known_hosts_file => '/dev/null', :keys => [node.keypath], :timeout => 5,
-          :logger => Logger.new(debug ? $stderr : $stdout),
-          :verbose => (debug ? Logger::FATAL : Logger::DEBUG))
-        rescue Errno::ECONNREFUSED
-          @returns[node.host][:out] = "ERROR: Connection refused"
-          @returns[node.host][:exit] = 10000
-        rescue SocketError
-          @returns[node.host][:out] = "ERROR: no nodename nor servname provided, or not known"
-          @returns[node.host][:exit] = 20000
-        rescue Timeout::Error
-          @returns[node.host][:out] = "ERROR: Connection timeout"
-          @returns[node.host][:exit] = 30000
-        rescue Net::SSH::AuthenticationFailed => e
-          @returns[node.host][:out] = "ERROR: Authentication failure (#{e.to_s})"
-          @returns[node.host][:exit] = 40000
+        threads << Thread.new do
+          returns_lock.synchronize { 
+            @returns[node.host] = { :exit => 0, :out => '' } 
+          }
+          begin
+            cons_lock.synchronize {
+              connections << Net::SSH.start(node.host, node.user, :port => node.port, :paranoid => false, 
+              :user_known_hosts_file => '/dev/null', :keys => [node.keypath], :timeout => 5,
+              :logger => Logger.new(debug ? $stderr : $stdout),
+              :verbose => (debug ? Logger::FATAL : Logger::DEBUG))
+            }
+          rescue Errno::ECONNREFUSED
+            returns_lock.synchronize {
+              @returns[node.host][:out] = "ERROR: Connection refused"
+              @returns[node.host][:exit] = 10000
+            }
+            
+            cons_lock.synchronize { connections << nil }
+          rescue SocketError
+            returns_lock.synchronize {
+              @returns[node.host][:out] = "ERROR: no nodename nor servname provided, or not known"
+              @returns[node.host][:exit] = 20000
+            }
+            
+            cons_lock.synchronize { connections << nil }
+          rescue Timeout::Error
+            returns_lock.synchronize {
+              @returns[node.host][:out] = "ERROR: Connection timeout"
+              @returns[node.host][:exit] = 30000
+            }
+            
+            cons_lock.synchronize { connections << nil }
+          rescue Net::SSH::AuthenticationFailed => e
+            returns_lock.synchronize {
+              @returns[node.host][:out] = "ERROR: Authentication failure (#{e.to_s})"
+              @returns[node.host][:exit] = 40000
+            }
+            
+            cons_lock.synchronize { connections << nil }
+          end
         end
       end
       
-      connections
+      loop do
+        break if nodes.length == connections.length
+        sleep 0.2
+      end
+      
+      connections.compact
     end
     
     ##

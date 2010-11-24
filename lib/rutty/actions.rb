@@ -246,22 +246,20 @@ module Rutty
     # @param [Nodes] nodes The {Node} objects to connect to
     # @return [Array<Net:SSH::Connection>] The array of live connections
     def connect_to_nodes nodes, debug = false
-      require 'thread'
       require 'logger'
       require 'net/ssh'
       require 'net/scp'
-      
-      require 'ruby-debug'
-      
-      Thread.abort_on_exception = true
+      require 'fastthread'
+      require 'rutty/thread_pool/pool'
       
       connections = []
       cons_lock = Mutex.new
       returns_lock = Mutex.new
-      threads = []
+      
+      pool = Rutty::ThreadPool.new 10
       
       nodes.each do |node|
-        threads << Thread.new do
+        pool.process do
           returns_lock.synchronize { 
             @returns[node.host] = { :exit => 0, :out => '' } 
           }
@@ -309,6 +307,7 @@ module Rutty
         sleep 0.2
       end
       
+      pool.shutdown
       connections.compact
     end
     

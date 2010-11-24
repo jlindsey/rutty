@@ -122,8 +122,9 @@ will run `uptime` on any node that has a "foo" tag **OR** any node that has **BO
 TODO
 ----
 
-* Cleanup dsh action code
-* Implement delete_node command
+* Refactor defaults config YAML to allow for a broader range of 
+  configuration options (max number of threads, default output format, etc)
+* Implement `rutty upgrade` action, which will upgrade your config files to the latest version
 
 Note on Patches/Pull Requests
 -----------------------------

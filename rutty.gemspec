@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rutty}
-  s.version = "2.3.2"
+  s.version = "2.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Josh Lindsey"]
@@ -40,6 +40,8 @@ Gem::Specification.new do |s|
     "lib/rutty/node.rb",
     "lib/rutty/nodes.rb",
     "lib/rutty/proc_classes.rb",
+    "lib/rutty/thread_pool/pool.rb",
+    "lib/rutty/thread_pool/worker.rb",
     "lib/rutty/treetop/syntax_nodes.rb",
     "lib/rutty/treetop/tag_query.rb",
     "lib/rutty/treetop/tag_query.treetop",

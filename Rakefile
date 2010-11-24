@@ -22,18 +22,6 @@ Jeweler::Tasks.new do |gem|
   gem.homepage = "http://github.com/jlindsey/rutty"
   gem.license = "MIT"
   gem.authors = ["Josh Lindsey"]
-  gem.add_development_dependency "bundler", ">= 1.0.0"
-  gem.add_development_dependency "jeweler", ">= 1.5.1"
-  gem.add_development_dependency "thoughtbot-shoulda", ">= 0"
-  gem.add_development_dependency "xml-simple", ">= 1.0.12"
-  gem.add_runtime_dependency "commander", ">= 4.0.3"
-  gem.add_runtime_dependency "terminal-table", ">= 1.4.2"
-  gem.add_runtime_dependency "json", ">= 1.4.6"
-  gem.add_runtime_dependency "net-ssh", ">= 2.0.23"
-  gem.add_runtime_dependency "net-scp", ">= 1.0.4"
-  gem.add_runtime_dependency "builder", ">= 2.1.2"
-  gem.add_runtime_dependency "treetop", ">= 1.4.8"
-  gem.add_runtime_dependency "fastthread", ">= 1.0.7"
 end
 Jeweler::RubygemsDotOrgTasks.new
 

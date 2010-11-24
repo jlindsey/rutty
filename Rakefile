@@ -33,6 +33,7 @@ Jeweler::Tasks.new do |gem|
   gem.add_runtime_dependency "net-scp", ">= 1.0.4"
   gem.add_runtime_dependency "builder", ">= 2.1.2"
   gem.add_runtime_dependency "treetop", ">= 1.4.8"
+  gem.add_runtime_dependency "fastthread", ">= 1.0.7"
 end
 Jeweler::RubygemsDotOrgTasks.new
 

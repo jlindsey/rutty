@@ -7,6 +7,7 @@ gem "net-ssh", '~> 2.0.23'
 gem "net-scp", '~> 1.0.4'
 gem "builder", '~> 2.1.2'
 gem "treetop", '~> 1.4.8'
+gem "fastthread", '~> 1.0.7'
 
 group :development do
   gem "jeweler", '~> 1.5.1'

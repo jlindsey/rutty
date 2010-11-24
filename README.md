@@ -55,7 +55,7 @@ After initialization, you must add nodes to the RuTTY config. This is done with 
 Invoking `rutty help add_node` will give you a list of all the options to pass into it. Any options you don't pass
 will be filled in from the defaults at `$RUTTY_HOME/defaults.yaml`.
 
-	$ rutty add_node example.com -u root -k /Users/jlindsey/.ssh/id_rsa --tags example,test
+	$ rutty add_node example.com -u root -k /Users/jlindsey/.ssh/id_rsa -g example,test
 	
 The above will add a node to the RuTTY config that looks like this (in YAML):
 
@@ -78,7 +78,7 @@ can be omitted. That is to say, the following two commands are identical:
 	$ rutty dsh -a uptime
 	$ rutty -a uptime
 
-The `dsh` action can accept either a list of tags passed via `--tags` or the `-a` flag, which will run the command
+The `dsh` action can accept either a list of tags passed via `-g` or the `-a` flag, which will run the command
 on all defined nodes regardless of tags.
 
 Note that any command that has any whitespace in it must be enclosed in quotes.
@@ -87,13 +87,13 @@ Note that any command that has any whitespace in it must be enclosed in quotes.
 	
 ###Tags###
 
-The `rutty dsh` and `rutty scp` commands both allow the `--tags` flag. The usage of this flag on these two commands
+The `rutty dsh` and `rutty scp` commands both allow the `-g` flag. The usage of this flag on these two commands
 is different than on `add_node`, where it is simply a list of tags to apply to the new node. On the remote commands,
 it essentially has three "modes": single tag, multiple comma-separated tags, and pseudo-SQL tag query.
 
 The single tag mode is simple. The command
 
-	$ rutty dsh --tags foobar uptime
+	$ rutty dsh -g foobar uptime
 
 will run the `uptime` command on every node that is tagged with "foobar".
 
@@ -102,7 +102,7 @@ will run the `uptime` command on every node that is tagged with "foobar".
 The multiple tags mode is essentially an OR query. It will run the command on any nodes that have **ANY** of the
 specified tags. For example:
 
-	$ rutty dsh --tags foo,baz,bar uptime
+	$ rutty dsh -g foo,baz,bar uptime
 
 will run the `uptime` command on any nodes that are tagged with "foo" **OR** "baz" **OR** "bar".
 
@@ -111,11 +111,11 @@ will run the `uptime` command on any nodes that are tagged with "foo" **OR** "ba
 The pseudo-SQL tag query mode provides the most control over your tags. This allows you to pass in a string that looks
 a bit like SQL, letting you specify complex rules for your tag lookup. For example:
 
-	$ rutty dsh --tags "'foo' AND 'bar'" uptime
+	$ rutty dsh -g "'foo' AND 'bar'" uptime
 
 will run `uptime` on any node that has **BOTH** "foo" and "bar" tags. The command
 
-	$ rutty dsh --tags "'foo' OR ('baz' AND 'bar')" uptime
+	$ rutty dsh -g "'foo' OR ('baz' AND 'bar')" uptime
 	
 will run `uptime` on any node that has a "foo" tag **OR** any node that has **BOTH** "baz" and "bar" tags.
 

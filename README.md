@@ -125,6 +125,7 @@ TODO
 * Refactor defaults config YAML to allow for a broader range of 
   configuration options (max number of threads, default output format, etc)
 * Implement `rutty upgrade` action, which will upgrade your config files to the latest version
+* Make a GitHub page
 
 Note on Patches/Pull Requests
 -----------------------------

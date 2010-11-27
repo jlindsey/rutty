@@ -22,6 +22,9 @@ Jeweler::Tasks.new do |gem|
   gem.homepage = "http://github.com/jlindsey/rutty"
   gem.license = "MIT"
   gem.authors = ["Josh Lindsey"]
+
+  require './lib/rutty/version.rb'
+  gem.version = Rutty::Version::STRING
 end
 Jeweler::RubygemsDotOrgTasks.new
 

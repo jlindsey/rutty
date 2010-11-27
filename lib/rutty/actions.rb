@@ -17,6 +17,7 @@ module Rutty
     #   that this falls back to {Rutty::Consts::CONF_DIR} if not passed in by the user.
     def init dir
       require 'yaml'
+      require 'fileutils'
       
       general_file = File.join(dir, Rutty::Consts::GENERAL_CONF_FILE)
       nodes_file = File.join(dir, Rutty::Consts::NODES_CONF_FILE)

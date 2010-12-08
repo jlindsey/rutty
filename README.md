@@ -127,6 +127,7 @@ TODO
 * Implement `rutty upgrade` action, which will upgrade your config files to the latest version
 * Update pseudo-SQL tag parser to make the quotes around tags in queries optional
 * Make a GitHub page
+* Add multi_progress_bar to scp command
 
 Note on Patches/Pull Requests
 -----------------------------

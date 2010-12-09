@@ -266,12 +266,12 @@ module Rutty
             @returns[node.host] = { :exit => 0, :out => '' } 
           }
           begin
-            cons_lock.synchronize {
-              connections << Net::SSH.start(node.host, node.user, :port => node.port, :paranoid => false, 
-              :user_known_hosts_file => '/dev/null', :keys => [node.keypath], :timeout => 5,
-              :logger => Logger.new(debug ? $stderr : $stdout),
-              :verbose => (debug ? Logger::FATAL : Logger::DEBUG))
-            }
+            conn = Net::SSH.start(node.host, node.user, :port => node.port, :paranoid => false, 
+                :user_known_hosts_file => '/dev/null', :keys => [node.keypath], :timeout => 5,
+                :logger => Logger.new(debug ? $stderr : $stdout),
+                :verbose => (debug ? Logger::FATAL : Logger::DEBUG))
+
+            cons_lock.synchronize { connections << conn }
           rescue Errno::ECONNREFUSED
             returns_lock.synchronize {
               @returns[node.host][:out] = "ERROR: Connection refused"

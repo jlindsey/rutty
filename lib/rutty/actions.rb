@@ -245,6 +245,7 @@ module Rutty
     # @see #scp
     #
     # @param [Nodes] nodes The {Node} objects to connect to
+    # @param [Bool] debug (false) Whether to output debugging info for each connection
     # @return [Array<Net:SSH::Connection>] The array of live connections
     def connect_to_nodes nodes, debug = false
       require 'logger'

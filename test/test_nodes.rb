@@ -59,7 +59,7 @@ class TestNodes < Test::Unit::TestCase
       Rutty::Nodes.publicize_methods do
         assert_instance_of Rutty::Procs::SingleTagQuery, @nodes.get_tag_query_filter('foo')
         assert_instance_of Rutty::Procs::MultipleTagQuery, @nodes.get_tag_query_filter('foo,bar')
-        assert_instance_of Rutty::Procs::SqlLikeTagQuery, @nodes.get_tag_query_filter("'foo' AND 'bar' OR 'baz'")
+        assert_instance_of Rutty::Procs::SqlLikeTagQuery, @nodes.get_tag_query_filter("foo AND bar OR baz")
       end
     end
     
@@ -71,12 +71,12 @@ class TestNodes < Test::Unit::TestCase
 
           parser = TagQueryGrammarParser.new
 
-          proc_str = @nodes.recursive_build_query_proc_string parser.parse("'foo' AND 'bar' OR 'baz'").elements
+          proc_str = @nodes.recursive_build_query_proc_string parser.parse("foo AND bar OR baz").elements
           proc_str = proc_str.rstrip << ') }'
           
           assert_equal "Procs::SqlLikeTagQuery.new { |n| !(n.has_tag?('foo') && n.has_tag?('bar') || n.has_tag?('baz')) }", proc_str
           
-          proc_str = @nodes.recursive_build_query_proc_string parser.parse("'test' OR ('example' AND 'foo')").elements
+          proc_str = @nodes.recursive_build_query_proc_string parser.parse("test OR (example AND foo)").elements
           proc_str = proc_str.rstrip << ') }'
           
           assert_equal "Procs::SqlLikeTagQuery.new { |n| !(n.has_tag?('test') || (n.has_tag?('example') && n.has_tag?('foo'))) }", proc_str
@@ -85,7 +85,7 @@ class TestNodes < Test::Unit::TestCase
     
     should "raise an exception on malformed tag query strings" do
       Rutty::Nodes.publicize_methods do
-        ["'foo' ARND 'bar'", "'fail", "'failure' AND )'foo'"].each do |str|
+        ["foo ARND bar", "'fail", "failure AND )foo"].each do |str|
           assert_raises Rutty::InvalidTagQueryString do
             @nodes.get_tag_query_filter str
           end
@@ -128,15 +128,15 @@ class TestNodes < Test::Unit::TestCase
     end
     
     should "correctly filter on a SQL-like tag query and return the correct node(s)" do
-      filtered = @nodes.filter(OpenStruct.new :tags => "'test' AND 'localhost'")
+      filtered = @nodes.filter(OpenStruct.new :tags => "test AND localhost")
       assert_equal 1, filtered.length
       assert_equal [@node1], filtered
       
-      filtered = @nodes.filter(OpenStruct.new :tags => "'example' OR 'localhost'")
+      filtered = @nodes.filter(OpenStruct.new :tags => "example OR localhost")
       assert_equal 2, filtered.length
       assert_equal [@node1, @node3], filtered
       
-      filtered = @nodes.filter(OpenStruct.new :tags => "'localhost' AND 'test' OR ('google')")
+      filtered = @nodes.filter(OpenStruct.new :tags => "localhost AND test OR (google)")
       assert_equal 2, filtered.length
       assert_equal [@node1, @node2], filtered
     end

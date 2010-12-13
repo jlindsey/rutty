@@ -112,7 +112,7 @@ module Rutty
 
         parsed_syntax_tree = parser.parse(query_str)
 
-        raise InvalidTagQueryString.new "error: Unable to parse tag query string" if parsed_syntax_tree.nil?
+        raise InvalidTagQueryString.new "Unable to parse tag query string" if parsed_syntax_tree.nil?
         
         proc_str = recursive_build_query_proc_string parsed_syntax_tree.elements
         proc_str = proc_str.rstrip << ') }'
@@ -145,7 +145,7 @@ module Rutty
 
       case elem.class.to_s
       when 'TagQueryGrammar::Tag'
-        str << "n.has_tag?(#{elem.text_value}) "
+        str << "n.has_tag?('#{elem.text_value}') "
       when 'TagQueryGrammar::AndLiteral'
         str << "&& "
       when 'TagQueryGrammar::OrLiteral'

@@ -4,7 +4,11 @@ grammar TagQueryGrammar
   end
 
   rule tag
-    ["|'] [\w-]+ ["|'] <Tag>
+    !(quote / group / boolean / space / group_start / group_end) [\w-]+ <Tag>
+  end
+
+  rule quote
+    '"' / "'"
   end
 
   rule group

@@ -111,11 +111,11 @@ will run the `uptime` command on any nodes that are tagged with "foo" **OR** "ba
 The pseudo-SQL tag query mode provides the most control over your tags. This allows you to pass in a string that looks
 a bit like SQL, letting you specify complex rules for your tag lookup. For example:
 
-	$ rutty dsh -g "'foo' AND 'bar'" uptime
+	$ rutty dsh -g "foo AND bar" uptime
 
 will run `uptime` on any node that has **BOTH** "foo" and "bar" tags. The command
 
-	$ rutty dsh -g "'foo' OR ('baz' AND 'bar')" uptime
+	$ rutty dsh -g "foo OR (baz AND bar)" uptime
 	
 will run `uptime` on any node that has a "foo" tag **OR** any node that has **BOTH** "baz" and "bar" tags.
 

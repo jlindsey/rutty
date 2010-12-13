@@ -50,3 +50,9 @@ end
 
 task :default => :test
 
+namespace :treetop do
+  task :regen do
+    %x(cd #{File.dirname __FILE__}/lib/rutty/treetop && tt tag_query.treetop)
+  end
+end
+

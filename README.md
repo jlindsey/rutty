@@ -122,6 +122,7 @@ will run `uptime` on any node that has a "foo" tag **OR** any node that has **BO
 TODO
 ----
 
+* Add negation to tag query (eg something like "'foo' AND !'bar'" or "'foo' AND NOT 'bar'")
 * Refactor defaults config YAML to allow for a broader range of 
   configuration options (max number of threads, default output format, etc)
 * Implement `rutty upgrade` action, which will upgrade your config files to the latest version

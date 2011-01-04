@@ -23,8 +23,8 @@ class Test::Unit::TestCase
   
   TMP_DIR = File.join(File.dirname(__FILE__), '..', 'tmp')
   TEST_CONF_DIR = File.join(TMP_DIR, 'config')
-  TEST_GENERAL_CONF = File.join(TEST_CONF_DIR, 'defaults.yaml')
-  TEST_NODES_CONF = File.join(TEST_CONF_DIR, 'nodes.yaml')
+  TEST_GENERAL_CONF = File.join(TEST_CONF_DIR, Rutty::Consts::GENERAL_CONF_FILE)
+  TEST_NODES_CONF = File.join(TEST_CONF_DIR, Rutty::Consts::NODES_CONF_FILE)
   
   RUTTY_BIN = File.join File.dirname(__FILE__), '..', 'bin', 'rutty'
   

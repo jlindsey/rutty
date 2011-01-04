@@ -11,7 +11,7 @@ module Rutty
     DEFAULT_OUTPUT_FORMAT = 'human-readable'
     
     ## Name of the general (defaults) config file
-    GENERAL_CONF_FILE = 'defaults.yaml'
+    GENERAL_CONF_FILE = 'config.yaml'
     ## Name of the datastore file for user-defined nodes
     NODES_CONF_FILE = 'nodes.yaml'
     

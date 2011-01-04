@@ -109,44 +109,69 @@ module TagQueryGrammar
     end
 
     i0, s0 = index, []
-    if has_terminal?('\G["|\']', true, index)
-      r1 = true
-      @index += 1
+    i1 = index
+    i2 = index
+    r3 = _nt_quote
+    if r3
+      r2 = r3
     else
+      r4 = _nt_group
+      if r4
+        r2 = r4
+      else
+        r5 = _nt_boolean
+        if r5
+          r2 = r5
+        else
+          r6 = _nt_space
+          if r6
+            r2 = r6
+          else
+            r7 = _nt_group_start
+            if r7
+              r2 = r7
+            else
+              r8 = _nt_group_end
+              if r8
+                r2 = r8
+              else
+                @index = i2
+                r2 = nil
+              end
+            end
+          end
+        end
+      end
+    end
+    if r2
       r1 = nil
+    else
+      @index = i1
+      r1 = instantiate_node(SyntaxNode,input, index...index)
     end
     s0 << r1
     if r1
-      s2, i2 = [], index
+      s9, i9 = [], index
       loop do
         if has_terminal?('\G[\\w-]', true, index)
-          r3 = true
+          r10 = true
           @index += 1
         else
-          r3 = nil
+          r10 = nil
         end
-        if r3
-          s2 << r3
+        if r10
+          s9 << r10
         else
           break
         end
       end
-      if s2.empty?
-        @index = i2
-        r2 = nil
+      if s9.empty?
+        @index = i9
+        r9 = nil
       else
-        r2 = instantiate_node(SyntaxNode,input, i2...index, s2)
+        r9 = instantiate_node(SyntaxNode,input, i9...index, s9)
       end
-      s0 << r2
-      if r2
-        if has_terminal?('\G["|\']', true, index)
-          r4 = true
-          @index += 1
-        else
-          r4 = nil
-        end
-        s0 << r4
-      end
+      s0 << r9
     end
     if s0.last
       r0 = instantiate_node(Tag,input, i0...index, s0)
@@ -157,6 +182,48 @@ module TagQueryGrammar
     end
 
     node_cache[:tag][start_index] = r0
+
+    r0
+  end
+
+  def _nt_quote
+    start_index = index
+    if node_cache[:quote].has_key?(index)
+      cached = node_cache[:quote][index]
+      if cached
+        cached = SyntaxNode.new(input, index...(index + 1)) if cached == true
+        @index = cached.interval.end
+      end
+      return cached
+    end
+
+    i0 = index
+    if has_terminal?('"', false, index)
+      r1 = instantiate_node(SyntaxNode,input, index...(index + 1))
+      @index += 1
+    else
+      terminal_parse_failure('"')
+      r1 = nil
+    end
+    if r1
+      r0 = r1
+    else
+      if has_terminal?("'", false, index)
+        r2 = instantiate_node(SyntaxNode,input, index...(index + 1))
+        @index += 1
+      else
+        terminal_parse_failure("'")
+        r2 = nil
+      end
+      if r2
+        r0 = r2
+      else
+        @index = i0
+        r0 = nil
+      end
+    end
+
+    node_cache[:quote][start_index] = r0
 
     r0
   end

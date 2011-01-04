@@ -2,13 +2,13 @@ GEM
   remote: http://rubygems.org/
   specs:
     builder (2.1.2)
-    columnize (0.3.1)
+    columnize (0.3.2)
     commander (4.0.3)
       highline (>= 1.5.0)
     fastthread (1.0.7)
     git (1.2.5)
     highline (1.6.1)
-    jeweler (1.5.1)
+    jeweler (1.5.2)
       bundler (~> 1.0.0)
       git (>= 1.2.5)
       rake
@@ -19,15 +19,14 @@ GEM
     net-ssh (2.0.23)
     polyglot (0.3.1)
     rake (0.8.7)
-    rcov (0.9.9)
-    ruby-debug (0.10.3)
+    ruby-debug (0.10.4)
       columnize (>= 0.1)
-      ruby-debug-base (~> 0.10.3.0)
-    ruby-debug-base (0.10.3)
+      ruby-debug-base (~> 0.10.4.0)
+    ruby-debug-base (0.10.4)
       linecache (>= 0.3)
     shoulda (2.11.3)
     terminal-table (1.4.2)
-    treetop (1.4.8)
+    treetop (1.4.9)
       polyglot (>= 0.3.1)
     xml-simple (1.0.12)
 
@@ -43,7 +42,6 @@ DEPENDENCIES
   json (~> 1.4.6)
   net-scp (~> 1.0.4)
   net-ssh (~> 2.0.23)
-  rcov
   ruby-debug
   shoulda
   terminal-table (~> 1.4.2)

@@ -38,8 +38,9 @@ end
 task :default => :test
 
 namespace :treetop do
+  desc "Recompile the Treetop Ruby parser file"
   task :regen do
-    %x(cd #{File.dirname __FILE__}/lib/rutty/treetop && tt tag_query.treetop)
+    puts %x(cd #{File.dirname __FILE__}/lib/rutty/treetop && tt tag_query.treetop 2>&1)
   end
 end
 

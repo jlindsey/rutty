@@ -338,7 +338,7 @@ module Rutty
 
           if hash[:exit] >= 10000
             padded_host = "<%= color('#{padded_host}', :critical) %>"
-            hash[:out] = "<%= color('#{hash[:out]}', :red) %>"
+            hash[:out] = "<%= color('#{hash[:out]}', :red) %>\n"
           elsif hash[:exit] > 0
             padded_host = "<%= color('#{padded_host}', :error) %>"
           else

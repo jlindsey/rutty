@@ -252,16 +252,16 @@ module Rutty
       require 'net/ssh'
       require 'net/scp'
       require 'fastthread'
-      require 'rutty/thread_pool/pool'
+      require 'work_queue'
       
       connections = []
       cons_lock = Mutex.new
       returns_lock = Mutex.new
       
-      pool = Rutty::ThreadPool.new 10
+      pool = WorkQueue.new 10
       
       nodes.each do |node|
-        pool.process do
+        pool.enqueue_b do
           returns_lock.synchronize { 
             @returns[node.host] = { :exit => 0, :out => '' } 
           }
@@ -309,7 +309,7 @@ module Rutty
         sleep 0.2
       end
       
-      pool.shutdown
+      pool.stop
       connections.compact
     end
     

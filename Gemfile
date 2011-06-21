@@ -1,6 +1,6 @@
 source :gemcutter
 
-gem "commander", '~> 4.0.3'
+gem "commander", '~> 4.0.4'
 gem "terminal-table", '~> 1.4.2'
 gem "json", '~> 1.4.6'
 gem "net-ssh", '~> 2.0.23'
@@ -15,6 +15,11 @@ group :development do
   gem "bundler", '~> 1.0.0'
   gem "shoulda", ">= 0"
   gem "xml-simple", '~> 1.0.12'
-  gem "ruby-debug", ">= 0"
+  platforms :ruby_18 do
+    gem "ruby-debug", ">= 0"
+  end
+  platforms :ruby_19 do
+    gem "ruby-debug19", ">= 0"
+  end
   gem "rake", "~> 0.9.2"
 end

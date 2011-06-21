@@ -9,7 +9,7 @@ module Rutty
   module Version
     MAJOR = 2
     MINOR = 5
-    PATCH = 2
+    PATCH = 3
     BUILD = nil
 
     STRING = [MAJOR, MINOR, PATCH, BUILD].compact.join('.')

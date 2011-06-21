@@ -11,7 +11,7 @@ gem "fastthread", '~> 1.0.7'
 gem "work_queue", '~> 1.0.0'
 
 group :development do
-  gem "jeweler", '~> 1.5.1'
+  gem "jeweler", '~> 1.6.2'
   gem "bundler", '~> 1.0.0'
   gem "shoulda", ">= 0"
   gem "xml-simple", '~> 1.0.12'

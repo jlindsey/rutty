@@ -35,10 +35,10 @@ Installation
 
 Or, for development checkouts:
 
-  $ git clone git://github.com/jlindsey/rutty.git
-  $ cd rutty
-  $ gem install bundler ; bundle install
-  $ rake install
+	$ git clone git://github.com/jlindsey/rutty.git
+	$ cd rutty
+	$ gem install bundler ; bundle install
+	$ rake install
 
 Usage
 -----

@@ -9,7 +9,7 @@ Also supports SCP uploads to multiple remote servers using the same tagging syst
 Requirements
 ------------
 
-* Ruby >= 1.8.7 (Not tested on 1.9.x)
+* Ruby >= 1.8.7 (Now 1.9.x approved!)
 * Rubygems >= 1.3.7
 
 ###Development Requirements###

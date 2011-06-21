@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rutty}
-  s.version = "2.5.0"
+  s.version = "2.5.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Josh Lindsey"]
@@ -64,21 +64,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.6.2}
   s.summary = %q{A DSH implementation in Ruby}
-  s.test_files = [
-    "test/helper.rb",
-    "test/test_action_add_node.rb",
-    "test/test_action_dsh.rb",
-    "test/test_action_init.rb",
-    "test/test_action_list_nodes.rb",
-    "test/test_action_scp.rb",
-    "test/test_actions.rb",
-    "test/test_config.rb",
-    "test/test_consts.rb",
-    "test/test_helpers.rb",
-    "test/test_node.rb",
-    "test/test_nodes.rb",
-    "test/test_runner.rb"
-  ]
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
@@ -93,7 +78,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<treetop>, ["~> 1.4.8"])
       s.add_runtime_dependency(%q<fastthread>, ["~> 1.0.7"])
       s.add_runtime_dependency(%q<work_queue>, ["~> 1.0.0"])
-      s.add_development_dependency(%q<jeweler>, ["~> 1.5.1"])
+      s.add_development_dependency(%q<jeweler>, ["~> 1.6.2"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<shoulda>, [">= 0"])
       s.add_development_dependency(%q<xml-simple>, ["~> 1.0.12"])
@@ -109,7 +94,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<treetop>, ["~> 1.4.8"])
       s.add_dependency(%q<fastthread>, ["~> 1.0.7"])
       s.add_dependency(%q<work_queue>, ["~> 1.0.0"])
-      s.add_dependency(%q<jeweler>, ["~> 1.5.1"])
+      s.add_dependency(%q<jeweler>, ["~> 1.6.2"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<xml-simple>, ["~> 1.0.12"])
@@ -126,7 +111,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<treetop>, ["~> 1.4.8"])
     s.add_dependency(%q<fastthread>, ["~> 1.0.7"])
     s.add_dependency(%q<work_queue>, ["~> 1.0.0"])
-    s.add_dependency(%q<jeweler>, ["~> 1.5.1"])
+    s.add_dependency(%q<jeweler>, ["~> 1.6.2"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<shoulda>, [">= 0"])
     s.add_dependency(%q<xml-simple>, ["~> 1.0.12"])

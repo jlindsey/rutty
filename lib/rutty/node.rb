@@ -38,6 +38,7 @@ module Rutty
     #
     # @param [String] tag The tag string to check for
     def has_tag? tag
+      return false if self.tags.nil? 
       self.tags.include? tag
     end
     

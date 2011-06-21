@@ -37,7 +37,8 @@ module Rutty
         defaults_hash = { 
           :user => 'root', 
           :keypath => File.join(ENV['HOME'], '.ssh', 'id_rsa'), 
-          :port => 22
+          :port => 22,
+          :tags => []
         }
 
         File.open(general_file, 'w') do |f|

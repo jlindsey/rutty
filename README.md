@@ -21,8 +21,8 @@ Requirements
 Since RuTTY is essentially a wrapper around SSH connections, a system that is capable of recieving SSH 
 connections must be available to fully test this tool. Currently, I have the tests setup to attempt to
 log into the current system via the loopback interface (localhost) as the user who ran the tests (as
-detected by `ENV['USER']`). It attempts to do this on port 22 using the public key found in
-`#{ENV['HOME']}/.ssh/id_rsa`.
+detected by `$USER`). It attempts to do this on port 22 using the public key found in
+`$HOME/.ssh/id_rsa`.
 
 Note that unless all these conditions are met on your system, tests will not be fully successful.
 
@@ -32,6 +32,13 @@ Installation
 	$ sudo gem install rutty
 	$ rutty init
 	$ rutty help
+
+Or, for development checkouts:
+
+  $ git clone git://github.com/jlindsey/rutty.git
+  $ cd rutty
+  $ gem install bundler ; bundle install
+  $ rake install
 
 Usage
 -----

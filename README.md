@@ -52,7 +52,7 @@ the config to all the other commands with the `-c` option.
 
 	$ rutty init
 	         create  /Users/jlindsey/.rutty
-	         create  /Users/jlindsey/.rutty/defaults.yaml
+	         create  /Users/jlindsey/.rutty/config.yaml
 	         create  /Users/jlindsey/.rutty/nodes.yaml
 	
 
@@ -60,7 +60,7 @@ the config to all the other commands with the `-c` option.
 
 After initialization, you must add nodes to the RuTTY config. This is done with the `rutty add_node` command.
 Invoking `rutty help add_node` will give you a list of all the options to pass into it. Any options you don't pass
-will be filled in from the defaults at `$RUTTY_HOME/defaults.yaml`.
+will be filled in from the defaults at `$RUTTY_HOME/config.yaml`.
 
 	$ rutty add_node example.com -u root -k /Users/jlindsey/.ssh/id_rsa -g example,test
 	
